@@ -1,12 +1,15 @@
 import express from "express";
-import { adminController, homeController } from "../controllers/index.js";
-import adminRouter from "./admin.route.js";
+import { homeController } from "../controllers/index.js";
+import bookRouter from "./book.route.js";
 
 const router = express.Router();
 
-router.get("/", homeController);
-router.get("/admin", adminController);
+// admin public file serve
+router.use("/public", express.static("/admin/public"));
 
-router.use("/api/v1", adminRouter);
+router.get("/", homeController);
+
+// admin/books
+router.use("/book", bookRouter);
 
 export default router;

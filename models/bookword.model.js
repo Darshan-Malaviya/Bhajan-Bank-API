@@ -1,7 +1,7 @@
-const mongooose = require("mongoose");
+import mongoose from "mongoose";
 
 // style schema for book words
-const styleSchema = new mongooose.Schema({
+const styleSchema = mongoose.Schema({
 	bold: {
 		type: Boolean,
 		default: false,
@@ -23,7 +23,7 @@ const styleSchema = new mongooose.Schema({
 
 // books keyword model schema
 // fields need to add createdBy, updatedBy
-const bookwordSchema = new mongooose.Schema(
+const bookwordSchema = new mongoose.Schema(
 	{
 		uniqueId: {
 			type: String,
@@ -31,7 +31,7 @@ const bookwordSchema = new mongooose.Schema(
 			unique: true,
 		},
 		bookId: {
-			type: mongooose.Schema.Types.ObjectId,
+			type: mongoose.Schema.Types.ObjectId,
 			ref: "Book",
 			required: true,
 		},
@@ -62,6 +62,6 @@ const bookwordSchema = new mongooose.Schema(
 	}
 );
 
-const Bookword = mongooose.model("Bookword", bookwordSchema);
+const Bookword = mongoose.model("Bookword", bookwordSchema);
 
-module.exports = Bookword;
+export default Bookword;

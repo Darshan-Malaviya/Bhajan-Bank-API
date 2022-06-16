@@ -1,0 +1,100 @@
+<div class="col-md-6">
+    <div class="card">
+        <div class="card-body">
+            <form action="/admin/{{operation}}/{{id}}" method="POST" id="bookForm" enctype="multipart/form-data"
+                onsubmit="return validateForm()" novalidate="">
+                <input type="hidden" name="csrfToken" value="{{csrfToken}}" class="form-control">
+
+                <div id="div_id_title" class="form-group">
+                    <label for="id_title" class="requiredField">
+                        Title<span class="asteriskField">*</span>
+                    </label>
+                    <div class="">
+                        <input type="text" name="title" maxlength="50"
+                            class="textinput textInput form-control ui-autocomplete-input" required="" id="id_title"
+                            value="{{book.title}}" autocomplete="off" />
+                    </div>
+                </div>
+                <div id="div_id_author" class="form-group">
+                    <label for="id_author" class="">
+                        Author
+                    </label>
+                    <div class="">
+                        <input type="text" name="author" maxlength="20" class="textinput textInput form-control"
+                            value="{{book.author}}" id="id_author" />
+                        <small id="hint_id_author" class="form-text text-muted">Enter name of the author.</small>
+                    </div>
+                </div>
+                <div id="div_id_publisher" class="form-group">
+                    <label for="id_publisher" class="requiredField">
+                        Publisher<span class="asteriskField">*</span>
+                    </label>
+                    <div class="">
+                        <input type="text" name="publisher"
+                            value="{{#if book.publisher}}{{book.publisher}}{{else}}Kalakunj Mandir{{/if}}"
+                            maxlength="30" class="textinput textInput form-control" required="" id="id_publisher" />
+                    </div>
+                </div>
+                <div id="div_id_description" class="form-group"> <label for="id_description" class="">
+                        Description
+                    </label>
+                    <div class=""> <textarea name="description" cols="40" rows="10" maxlength="500"
+                            class="textarea form-control" id="id_description" style="height: 97px;"
+                            spellcheck="false">{{book.description}}</textarea> </div>
+                </div>
+                <div id="div_id_image" class="form-group">
+                    <label for="id_image" class="requiredField">
+                        Image<span class="asteriskField">*</span>
+                    </label>
+                    <div class="">
+                        <input type="file" name="image" accept="image/*"
+                            class="clearablefileinput form-control-file form-control" required="" id="id_image" />
+                        {{#if book.image}}
+                        <small id="hint_id_image" class="form-text text-muted">current : <a
+                                href="{{book.image}}">{{book.image}}</a></small>
+                        {{else}}
+                        <small id="hint_id_image" class="form-text text-muted">Enter
+                            Cover Image for this Book. also Image size must be less than 500kb.</small>
+                        {{/if}}
+
+                    </div>
+                </div>
+                <div id="div_id_epub" class="form-group">
+                    <label for="id_epub" class="requiredField">
+                        Pdf<span class="asteriskField">*</span>
+                    </label>
+                    <div class="">
+                        <input type="file" name="epub" class="clearablefileinput form-control-file form-control"
+                            required="" id="id_epub" />
+                        {{#if book.url}}
+                        <small id="hint_id_epub" class="form-text text-muted">current : <a
+                                href="{{book.url}}">{{book.url}}</a></small>
+                        {{else}}
+                        <small id="hint_id_epub" class="form-text text-muted">Select file for this Book. also Image size
+                            must be less than 500kb.</small>
+                        {{/if}}
+                    </div>
+                </div>
+                {{!-- <div id="div_id_created_at" class="form-group">
+                    <label for="id_created_at" class="requiredField">
+                        Created at<span class="asteriskField">*</span>
+                    </label>
+                    <div class="">
+                        <input type="datetime-local" name="created_at" class="datetimeinput form-control" required=""
+                            id="id_created_at" /><input type="hidden" name="initial-created_at"
+                            id="initial-id_created_at" class="form-control" />
+                    </div>
+                </div> --}}
+                <div id="div_id_active" class="form-check form-group">
+                    <div class=""> <input type="checkbox" name="is_desktop" class="checkboxinput form-check-input"
+                            id="id_active" {{#if book.isActive}}checked{{/if}}> </div><label for="id_active"
+                        class="form-check-label">
+                        is Active
+                    </label>
+                </div>
+
+                <button type="submit" class="btn btn-success">Save</button>
+            </form>
+        </div>
+    </div>
+</div>
