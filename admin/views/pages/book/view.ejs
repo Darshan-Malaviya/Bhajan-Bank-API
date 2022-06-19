@@ -1,0 +1,119 @@
+<%- include('../../layouts/header.ejs') %>
+<style>
+
+</style>
+<%- include('../../layouts/sidebar.ejs') %>
+
+<div class="col-md-6">
+  <div class="card">
+    <div class="card-body">
+
+      
+      <% if (operation != 'view') { %>
+      <form action="/admin/book/<%= operation %>/<% if(locals.id){ %><%= id %><% } %>" method="POST" id="mainform" enctype="application/x-www-form-urlencoded">
+        <input type="hidden" name="csrfToken" value="<% if(locals.csrfToken){ %><%= csrfToken %><% } %>" class="form-control">
+        <% } %>
+        
+          <% if(locals.id){ %><div class="form-group"><span style="font-weight: bold;"><%= id %></span></div><% } %>
+
+        <div id="div_id_title" class="form-group">
+          <label for="id_title" class="requiredField">
+            Title<span class="asteriskField">*</span>
+          </label>
+          <div class="">
+            <input type="text" name="title" maxlength="50" class="textinput textInput form-control ui-autocomplete-input" required="" id="id_title" value="<% if(locals.book){ %><%= book.title %><% } %>" autocomplete="off" <% if (operation == 'view') { %>disabled<% } %> />
+          </div>
+        </div>
+        <div id="div_id_author" class="form-group">
+          <label for="id_author" class="">
+            Author
+          </label>
+          <div class="">
+            <input type="text" name="author" maxlength="20" class="textinput textInput form-control" value="<% if(locals.book){ %><%= book.author %><% } %>" id="id_author" <% if (operation == 'view') { %>disabled<% } %> />
+            <small id="hint_id_author" class="form-text text-muted">Enter name of the
+              author.</small>
+          </div>
+        </div>
+        <div id="div_id_publisher" class="form-group">
+          <label for="id_publisher" class="requiredField">
+            Publisher
+          </label>
+          <div class="">
+            <input type="text" name="publisher" value="<% if(locals.book){ %><%= book.publisher %><% } else { %> Kalakunj Mandir <% } %>" maxlength="30" class="textinput textInput form-control" id="id_publisher" <% if (operation == 'view') { %>disabled<% } %> />
+          </div>
+        </div>
+        <div id="div_id_description" class="form-group">
+          <label for="id_description" class="">
+            Description<span class="asteriskField">*</span>
+          </label>
+          <div class=""> <textarea name="description" cols="40" rows="10" maxlength="500" class="textarea form-control" id="id_description" style="height: 97px;" required spellcheck="false" <% if (operation == 'view') { %>disabled<% } %>><% if(locals.book){ %><%= book.description %><% } %></textarea>
+          </div>
+        </div>
+        <!-- <div id="div_id_image" class="form-group">
+          <label for="id_image" class="requiredField">
+            Image<% if (operation=='create' ) { %>
+            <span class="asteriskField">*</span>
+            <% } %>
+          </label>
+          <div class="">
+            <input type="file" name="image" accept="image/*" class="clearablefileinput form-control-file form-control" <% if (operation=='create') { %> required="" <% } %> id="id_image" <% if (operation == 'view') { %>disabled<% } %> />
+            <% if(locals.book){ %>
+            <small id="hint_id_image" class="form-text text-muted">current : <a href="<%= book.image %>">
+                <%=book.image%>
+              </a></small>
+            <% } else {%>
+            <small id="hint_id_image" class="form-text text-muted">Enter
+              Cover Image for this Book. also Image size must be less than
+              500kb.</small>
+            <% } %>
+
+          </div>
+        </div>
+        <div id="div_id_epub" class="form-group">
+          <label for="id_epub" class="requiredField">
+            Pdf<% if (operation=='create' ) { %>
+            <span class="asteriskField">*</span>
+            <% } %>
+          </label>
+          <div class="">
+            <input type="file" name="epub" class="clearablefileinput form-control-file form-control" <% if (operation=='create') { %> required="" <% } %> id="id_epub" <% if (operation == 'view') { %>disabled<% } %> />
+            <% if(locals.book){ %>
+            <small id="hint_id_epub" class="form-text text-muted">current : <a href="<%= book.url %>">
+                <%= book.url %>
+              </a></small>
+            <% } else {%>
+            <small id="hint_id_epub" class="form-text text-muted">Select file for this Book.
+              also Image
+              size
+              must be less than 500kb.</small>
+            <% } %>
+          </div>
+        </div> -->
+        <!-- -- <div id="div_id_created_at" class="form-group">
+                        <label for="id_created_at" class="requiredField">
+                            Created at<span class="asteriskField">*</span>
+                        </label>
+                        <div class="">
+                            <input type="datetime-local" name="created_at" class="datetimeinput form-control"
+                                required="" id="id_created_at" /><input type="hidden" name="initial-created_at"
+                                id="initial-id_created_at" class="form-control" />
+                        </div>
+                    </div> -->
+        <div id="div_id_active" class="form-check form-group">
+          <div class=""> <input type="checkbox" name="isActive" class="checkboxinput form-check-input" id="id_active" <% if(locals.book){ %> <% if(book.isActive) { %> checked <%}%><% } else{ %>checked <% } %> <% if (operation == 'view') { %>disabled<% } %>>
+          </div><label for="id_active" class="form-check-label">
+            is Active
+          </label>
+        </div>
+        <% if (operation != 'view') { %>
+        <button type="submit" class="btn btn-success">Save</button>
+      </form>
+      <% } %>
+    </div>
+  </div>
+</div>
+<%- include('../../layouts/footer.ejs') %>
+<script></script>
+</body>
+
+</html>

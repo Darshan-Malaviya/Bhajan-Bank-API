@@ -1,10 +1,10 @@
 import "dotenv/config";
 import express from "express";
-import handlebars from "express-handlebars";
 import session from "express-session";
 import { v4 as uuidv4 } from "uuid";
+import bodyParser from "body-parser";
 
-import db from "./db.js";
+import db from "./database/db.js";
 import apiRouter from "./routes/index.js";
 import adminRouter from "./admin/routes/index.js";
 
@@ -12,37 +12,35 @@ const PORT = process.env.port || 8000;
 
 const app = express();
 
+//db connection
+db();
+
 app.use(
 	session({
 		genid: (req) => {
-			return uuidv4(); // use UUIDs for session IDs
+			return uuidv4();
 		},
 		secret: process.env.SESSION_SECRET,
 		resave: false,
 		saveUninitialized: false,
 		cookie: {
 			maxAge: 1000 * 60 * 60 * 24 * 7, // 1 week
-			secure: true,
+			secure: false,
 		},
 	})
 );
 
-const hbs = handlebars.create({
-	defaultLayout: "main",
-	extname: ".hbs",
-	partialsDir: ["admin/views/partials"],
-});
-
-app.engine("hbs", hbs.engine);
-app.set("view engine", "hbs");
-
-app.use(express.urlencoded({ extended: false }));
-app.use(express.json());
-
+app.set("view engine", "ejs");
 app.set("views", ["./admin/views", "./views"]);
 
-//db connection
-db();
+app.use((req, res, next) => {
+	res.locals.req = req;
+	next();
+});
+
+
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 
 // Routes for the app
 // public routes for static files

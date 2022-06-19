@@ -1,0 +1,115 @@
+<%- include('../../layouts/header.ejs') %>
+    <style>
+
+    </style>
+    <%- include('../../layouts/sidebar.ejs') %>
+        <div class="card">
+            <div class="card-body">
+                <div class="row" style="margin-left: 1%;margin-bottom: 20px;">
+                    <a href="/admin/book/create" class="btn btn-primary" id="addbtn" data-toggle="tooltip" title="Add New Book">
+                        <i class="fa fa-plus" aria-hidden="true"></i>
+                    </a>
+                    <a class="btn btn-danger" href="/admin/book/delete" id="bulkdeletebtn" data-toggle="tooltip" title="Select Multiple Data and Delete at once." style="margin-left: 5px">
+                        Delete Selected
+                    </a>
+                </div>
+
+                <div class="table-responsive">
+                    <table id="zero_config" class="table table-striped">
+                        <thead class="thead-light">
+
+                            <tr>
+                                <th class="text-center">
+                                    <div class="custom-checkbox custom-control">
+                                        <input type="checkbox" data-checkboxes="mygroup" data-checkbox-role="dad"
+                                            class="custom-control-input" id="checkbox-all" />
+                                        <label for="checkbox-all" class="custom-control-label">&nbsp;</label>
+                                    </div>
+                                </th>
+                                <th>Title</th>
+                                <th>created At</th>
+                                <th class="text-right">Cover Image</th>
+                                <th class="text-right">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <%for(var i=0; i < rows.length; i++) { %>
+                                <% var row=rows[i] %>
+                                    <tr id="<%= row._id %>">
+                                        <td class="text-center">
+                                            <div class="custom-checkbox custom-control">
+                                                <input type="checkbox" data-checkboxes="mygroup"
+                                                    class="custom-control-input" id="checkbox-<%= row._id %>" value="<%= row._id %>" />
+                                                <label for="checkbox-<%= row._id %>" class="custom-control-label">&nbsp;</label>
+                                            </div>
+                                        </td>
+                                        <td data-toggle="tooltip" title="<%= row._id %>">
+                                            <%= row.title %>
+                                        </td>
+                                        <td>
+                                            <%= row.createdDate %>
+                                        </td>
+
+                                        <td class="text-right">
+                                            <button class="btn btn-warning a-btn-slide-text modal-view-btn"
+                                                data-image="<%= row.image %>" data-book="<%= row.title %>">
+                                                <i class="fas fa-eye-slash" aria-hidden="true"></i>
+                                            </button>
+
+                                            <a href="<%= row.image %>"
+                                                class="btn btn-info a-btn-slide-text download-btn" download>
+                                                <span><i class="fa fa-download" aria-hidden="true"></i></span>
+                                            </a>
+                                        </td>
+                                        <td class="text-right">
+                                            <div class="call-chat">
+                                                <a href="/admin/book/view/<%= row._id %>"
+                                                    class="btn btn-warning a-btn-slide-text btn-success">
+                                                    <i class="fas fa-eye-slash"></i>
+                                                </a>
+                                                <a href="/admin/book/update/<%= row._id %>"
+                                                    class="btn btn-success a-btn-slide-text btn-success">
+                                                    <i class="fas fa-edit"></i>
+                                                </a>
+                                                <button data-href="/admin/book/delete/<%= row._id %>"
+                                                    class="btn btn-danger a-btn-slide-text btn-danger deletebtn">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <% } %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <%- include('../../layouts/footer.ejs') %>
+<script>
+    
+
+    $('#zero_config').dataTable({
+        "columnDefs": [
+            { "sortable": false, "targets": [0, 3, 4] }
+        ],
+    });
+
+    $('.modal-view-btn').on('click', function () {
+        $('.modal').each(function () {
+            var $element = $(this);
+            console.log($element);
+            $element.remove();
+        });
+        var $this = $(this);
+        var book = $this.attr('data-book');
+        var image = $this.attr('data-image');
+        $this.fireModal({
+            title: `<h5> Book : ${book} <br> Image : <a href="${image}" target="_blank">${image}</a></h5>`,
+            body: `<img src="${image}" width="100% ">`
+        });
+    })
+
+</script>
+</body>
+
+</html>

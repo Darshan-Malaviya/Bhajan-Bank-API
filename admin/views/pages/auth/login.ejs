@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no" name="viewport" />
+  <link rel="icon" type="image/png" sizes="16x16" href="/admin/public/img/kalakunj-logo-icon.png" />
+  <title>Login &mdash; Kalakunj Mandir</title>
+
+  <!-- General CSS Files -->
+  <link rel="stylesheet" href="/admin/public/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="/admin/public/css/fontawesome.min.css" />
+
+  <!-- Template CSS -->
+  <link rel="stylesheet" href="/admin/public/css/style.css" />
+  <link rel="stylesheet" href="/admin/public/css/components.css" />
+</head>
+
+<body>
+  <div id="app">
+    <section class="section">
+      <div class="container">
+        <div class="row">
+          <div class="col-12 col-sm-8 offset-sm-2 col-md-6 offset-md-3 col-lg-6 offset-lg-3 col-xl-4 offset-xl-4">
+            <div class="login-brand">
+              <a href="/admin/">
+                <img src="/admin/public/img/kalakunj-logo-icon.jpg" alt="logo" width="100" class="shadow-light rounded-circle" /></a>
+            </div>
+
+            <div class="card card-primary">
+              <div class="card-header">
+                <h4>Login</h4>
+              </div>
+              <% if (locals.messages) { %> <% messages.forEach(element=> { %>
+              <div>
+                <div class="alert alert-<%= element.type %> m-2 show fade">
+                  <div class="alert-body"><%= element.message %></div>
+                </div>
+              </div>
+              <% }) %> <% } %>
+
+              <div class="card-body">
+                <form class="form-horizontal m-t-20" id="loginform" action="/admin/login/" method="POST">
+                  <input type="hidden" name="csrfToken" value="<%= csrfToken %>" />
+                  <input type="hidden" name="next" value="<%= next %>" />
+
+                  <div id="div_id_email" class="form-group">
+                    <label for="id_email" class="requiredField">
+                      Email<span class="asteriskField">*</span>
+                    </label>
+                    <div class="">
+                      <input type="email" name="email" autofocus autocapitalize="none" autocomplete="email" maxlength="30" class="textinput textInput form-control" required id="id_email" />
+                    </div>
+                  </div>
+                  <div id="div_id_password" class="form-group">
+                    <label for="id_password" class="requiredField">
+                      Password<span class="asteriskField">*</span>
+                    </label>
+                    <div class="">
+                      <input type="password" name="password" autocomplete="current-password" class="textinput textInput form-control" maxlength="20" required id="id_password" />
+                    </div>
+                  </div>
+
+                  <div class="form-group" style="margin-bottom: 20%"></div>
+
+                  <div class="form-group">
+                    <button type="submit" class="btn btn-success btn-lg btn-block" tabindex="4">
+                      <i class="fa fa-sign-in"></i>Login
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+            <div class="simple-footer">Copyright &copy; Kalakunj Mandir</div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- General JS Scripts -->
+  <script src="/static/new-dashboard/dist/js/jquery-3.4.1.js"></script>
+  <script src="/static/new-dashboard/dist/js/popper.min.js"></script>
+  <script src="/static/new-dashboard/dist/js/bootstrap.min.js"></script>
+  <script src="/static/new-dashboard/dist/js/jquery-nicescroll.js"></script>
+  <script src="/static/new-dashboard/dist/js/moment.js"></script>
+  <script src="/static/new-dashboard/dist/js/stisla.js"></script>
+
+  <!-- Template JS File -->
+  <script src="/static/new-dashboard/dist/js/custom.js"></script>
+  <script src="/static/new-dashboard/dist/js/scripts.js"></script>
+
+  <script>
+    // function validateForm() {
+    //   var has_error = false;
+
+    //   var email = $('#id_email');
+    //   var password = $('#id_password');
+
+    //   if (email.val() == '') {
+    //     email.addClass('is-invalid');
+    //     if ($('#error_1_id_email').length == 0) {
+    //       $('<p id="error_1_id_email" class="invalid-feedback"><strong>This field is required.</strong></p>').insertAfter(email);
+    //     }
+    //     has_error = true;
+    //   } else {
+    //     $('#error_1_id_email').remove();
+    //     email.removeClass('is-invalid');
+    //   }
+
+    //   if (password.val() == '') {
+    //     password.addClass('is-invalid');
+    //     if ($('#error_1_id_password').length == 0) {
+    //       $('<p id="error_1_id_password" class="invalid-feedback"><strong>This field is required.</strong></p>').insertAfter(password);
+    //     }
+    //     has_error = true;
+    //   } else {
+    //     $('#error_1_id_password').remove();
+    //     password.removeClass('is-invalid');
+    //   }
+
+    //   if (has_error == true) {
+    //     return false;
+    //   }
+    // }
+
+    // $('#id_email').on('focus', function() {
+    //   $('#error_1_id_email').remove();
+    //   $('#error_1_id_password').remove();
+    //   $(this).removeClass('is-invalid');
+    //   $('#id_password').removeClass('is-invalid');
+    // })
+
+    // $('#id_password').on('focus', function() {
+    //   $('#error_1_id_email').remove();
+    //   $('#error_1_id_password').remove();
+    //   $(this).removeClass('is-invalid');
+    //   $('#id_email').removeClass('is-invalid');
+    // })
+
+    var alerts = document.getElementsByClassName("alert");
+    for (let i = 0; i < alerts.length; i++) {
+      const element = alerts[i];
+      setTimeout(function() {
+        element.remove();
+      }, 10000);
+    }
+    $(".alert").each(function() {
+      var $this = $(this);
+      $this.on("click", function() {
+        $this.toggle();
+      });
+    });
+  </script>
+
+  <!-- Page Specific JS File -->
+</body>
+
+</html>

@@ -1,0 +1,71 @@
+<%- include('../../layouts/header.ejs') %>
+<style>
+
+</style>
+<%- include('../../layouts/sidebar.ejs') %>
+
+<div class="col-md-6">
+  <div class="card">
+    <div class="card-body">
+
+      <% if (operation != 'view') { %>
+      <form action="/admin/<%= table %>/<%= operation %>/<% if(locals.id){ %><%= id %><% } %>" method="POST" id="mainform" enctype="application/x-www-form-urlencoded">
+        <input type="hidden" name="csrfToken" value="<% if(locals.csrfToken){ %><%= csrfToken %><% } %>" class="form-control">
+        <% } %>
+        
+          <% if(locals.id){ %><div class="form-group"><span style="font-weight: bold;"><%= id %></span></div><% } %>
+
+        <div id="div_id_name" class="form-group">
+          <label for="id_name" class="requiredField">
+            Name<span class="asteriskField">*</span>
+          </label>
+          <div class="">
+            <input type="text" name="name" class="textinput textInput form-control ui-autocomplete-input" required="" id="id_name" value="<% if(locals.row){ %><%= row.name %><% } %>" autocomplete="off" <% if (operation == 'view') { %>disabled<% } %> />
+          </div>
+        </div>
+        <div id="div_id_email" class="form-group">
+          <label for="id_email" class="">
+            Email
+          </label>
+          <div class="">
+            <input type="email" name="email" class="textinput textInput form-control" value="<% if(locals.row){ %><%= row.email %><% } %>" id="id_email" <% if (operation == 'view') { %>disabled<% } %> />
+            <small id="hint_id_email" class="form-text text-muted">Enter name of the
+              email.</small>
+          </div>
+        </div>
+        <% if (operation == 'create') { %>
+        <div id="div_id_password" class="form-group">
+          <label for="id_password" class="">
+            Password
+          </label>
+          <div class="">
+            <input type="password" name="password" class="textinput textInput form-control" value="<% if(locals.row){ %><%= row.password %><% } %>" id="id_password" <% if (operation == 'view') { %>disabled<% } %> />
+            <small id="hint_id_password" class="form-text text-muted">Enter name of the
+              Password.</small>
+          </div>
+        </div>
+        <% } %>
+        <div id="div_id_active" class="form-check form-group">
+          <div class=""> <input type="checkbox" name="isActive" class="checkboxinput form-check-input" id="id_active" <% if(locals.row){ %> <% if(row.isActive) { %> checked <%}%><% } else{ %>checked <% } %> <% if (operation == 'view') { %>disabled<% } %>>
+          </div><label for="id_active" class="form-check-label">
+            is Active
+          </label>
+        </div>
+        <div id="div_id_superuser" class="form-check form-group">
+          <div class=""> <input type="checkbox" name="isSuperUser" class="checkboxinput form-check-input" id="id_superuser" <% if(locals.row){ %> <% if(row.isSuperUser) { %> checked <%}%><% } %> <% if (operation == 'view') { %>disabled<% } %>>
+          </div><label for="id_superuser" class="form-check-label">
+            is Super User
+          </label>
+        </div>
+        <% if (operation != 'view') { %>
+        <button type="submit" class="btn btn-success">Save</button>
+      </form>
+      <% } %>
+    </div>
+  </div>
+</div>
+<%- include('../../layouts/footer.ejs') %>
+<script></script>
+</body>
+
+</html>

@@ -1,0 +1,118 @@
+</div>
+
+</div>
+</div>
+</section>
+</div>
+<footer class="main-footer">
+    <div class="footer-left">
+        Copyright &copy; 2021
+        <div class="bullet"></div>
+        Design & Developed By
+        <a href="https://kalakunjmandir.com/" target="_blank">Kalakunj Mandir</a>
+    </div>
+    <div class="footer-right">1.0.0</div>
+</footer>
+</div>
+</div>
+
+<!-- General JS Scripts -->
+<script src="/admin/public/js/jquery-3.4.1.js"></script>
+<script src="/admin/public/js/popper.min.js"></script>
+<script src="/admin/public/js/bootstrap.min.js"></script>
+<script src="/admin/public/js/jquery-nicescroll.js"></script>
+<script src="/admin/public/js/jquery-ui.js"></script>
+<script src="/admin/public/js/moment.js"></script>
+<script src="/admin/public/js/stisla.js"></script>
+<!-- JS Libraies -->
+<script src="/admin/public/js/datatable/jquery.dataTables.min.js"></script>
+<script src="/admin/public/js/datatable/dataTables.bootstrap4.min.js"></script>
+<script src="/admin/public/js/datatable/select.bootstrap4.min.js"></script>
+<script src="/admin/public/js/datatable/modules-datatables.js"></script>
+<script src="/admin/public/js/sweetalert.min.js"></script>
+<script src="/admin/public/js/izitoast.min.js"></script>
+<script src="/admin/public/js/bootstrap-timepicker.min.js"></script>
+<script src="/admin/public/js/bootstrap-select.min.js"></script>
+<script src="/admin/public/js/prism.js"></script>
+
+<!-- Template JS File -->
+<script src="/admin/public/js/custom.js"></script>
+<script src="/admin/public/js/scripts.js"></script>
+
+<script>
+    $(".datetimeinput").attr("type", "datetime-local");
+
+    $(function () {
+        var path = location.pathname; // because the 'href' property of the DOM element is the absolute path
+        $(".nav-item").removeClass("active");
+        $(".nav-item a").each(function () {
+            var $this = $(this);
+            if ($this.attr("href") == path) {
+                $(this).parents(".nav-item").addClass("active");
+            }
+        });
+    });
+
+    var alerts = document.getElementsByClassName("alert");
+    for (let i = 0; i < alerts.length; i++) {
+        const element = alerts[i];
+        setTimeout(function () {
+            element.remove();
+        }, 10000);
+    }
+
+    $(".alert").each(function () {
+        var $this = $(this);
+        $this.on("click", function () {
+            $this.toggle();
+        });
+    });
+
+    $(".download-btn").each(function () {
+        var $this = $(this);
+        $this.attr("href");
+        if ($this.attr("href") == "/public/" || $this.attr("href") == "") {
+            $this.remove();
+        }
+    });
+
+    $('.deletebtn').on('click', function () {
+        var $this = $(this);
+        var hrefattr = $this.attr('data-href');
+        swal({
+            title: 'Are you sure?',
+            text: 'Once deleted, you will not be able to redo this action',
+            icon: 'warning',
+            buttons: true,
+            dangerMode: true,
+        })
+            .then((willDelete) => {
+                if (willDelete) {
+                    location.replace(hrefattr)
+                } else {
+                    swal('Your data is safe');
+                }
+            });
+    });
+
+
+    $("#zero_config_length").css("margin-top", "10px");
+
+    $("input").addClass("form-control");
+    $('input[type="checkbox"]').removeClass("form-control");
+
+    $("i.fas.fa-eye-slash").each(function () {
+        let $this = $(this);
+        let parentElement = $this.parent("*");
+        parentElement.on("mouseover", function () {
+            $this.toggleClass("fa-eye-slash");
+            $this.toggleClass("fa-eye");
+        });
+        parentElement.on("mouseout", function () {
+            $this.toggleClass("fa-eye-slash");
+            $this.toggleClass("fa-eye");
+        });
+    });
+
+
+</script>

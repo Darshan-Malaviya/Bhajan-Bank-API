@@ -9,6 +9,7 @@ const adminSchema = new mongoose.Schema(
 		email: {
 			type: String,
 			required: true,
+			unique: true,
 		},
 		password: {
 			type: String,
@@ -16,21 +17,11 @@ const adminSchema = new mongoose.Schema(
 		},
 		isActive: {
 			type: Boolean,
-			default: false,
+			default: true,
 		},
 		isSuperUser: {
 			type: Boolean,
 			default: false,
-		},
-		createdAt: {
-			type: Date,
-			default: Date.now,
-			required: true,
-		},
-		updatedAt: {
-			type: Date,
-			default: Date.now,
-			required: true,
 		},
 	},
 	{ timestamps: true }

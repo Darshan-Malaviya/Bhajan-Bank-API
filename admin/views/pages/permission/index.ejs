@@ -1,0 +1,96 @@
+<%- include('../../layouts/header.ejs') %>
+    <style>
+
+    </style>
+    <%- include('../../layouts/sidebar.ejs') %>
+        <div class="card">
+            <div class="card-body">
+                <div class="row" style="margin-left: 1%;margin-bottom: 20px;">
+                    <a href="/admin/<%= table %>/create" class="btn btn-primary" id="addbtn" data-toggle="tooltip" title="Add New Book">
+                        <i class="fa fa-plus" aria-hidden="true"></i>
+                    </a>
+                    <a class="btn btn-danger" href="/admin/<%= table %>/delete" id="bulkdeletebtn" data-toggle="tooltip" title="Select Multiple Data and Delete at once." style="margin-left: 5px">
+                        Delete Selected
+                    </a>
+                </div>
+
+                <div class="table-responsive">
+                    <table id="zero_config" class="table table-striped">
+                        <thead class="thead-light">
+
+                            <tr>
+                                <th class="text-center">
+                                    <div class="custom-checkbox custom-control">
+                                        <input type="checkbox" data-checkboxes="mygroup" data-checkbox-role="dad"
+                                            class="custom-control-input" id="checkbox-all" />
+                                        <label for="checkbox-all" class="custom-control-label">&nbsp;</label>
+                                    </div>
+                                </th>
+                                <th>Name</th>
+                                <th>Identifier</th>
+                                <th>Description</th>
+                                <th>ContentType</th>
+                                <th class="text-right">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <%for(var i=0; i < rows.length; i++) { %>
+                                <% var row=rows[i] %>
+                                    <tr id="<%= row._id %>">
+                                        <td class="text-center">
+                                            <div class="custom-checkbox custom-control">
+                                                <input type="checkbox" data-checkboxes="mygroup"
+                                                    class="custom-control-input" id="checkbox-<%= row._id %>" value="" />
+                                                <label for="checkbox-" class="custom-control-label">&nbsp;</label>
+                                            </div>
+                                        </td>
+                                        <td data-toggle="tooltip" title="<%= row._id %>">
+                                            <%= row.name %>
+                                        </td>
+                                        <td>
+                                            <%= row.identifier %>
+                                        </td>
+                                        <td>
+                                            <%= row.description %>
+                                        </td>
+                                        <td>
+                                            <%= row.contentType.identifier %>
+                                        </td>
+                                        <td class="text-right">
+                                            <div class="call-chat">
+                                                <a href="/admin/<%= table %>/view/<%= row._id %>"
+                                                    class="btn btn-warning a-btn-slide-text btn-success">
+                                                    <i class="fas fa-eye-slash"></i>
+                                                </a>
+                                                <a href="/admin/<%= table %>/update/<%= row._id %>"
+                                                    class="btn btn-success a-btn-slide-text btn-success">
+                                                    <i class="fas fa-edit"></i>
+                                                </a>
+                                                <button data-href="/admin/<%= table %>/delete/<%= row._id %>"
+                                                    class="btn btn-danger a-btn-slide-text btn-danger deletebtn">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <% } %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <%- include('../../layouts/footer.ejs') %>
+<script>
+    
+    $('#zero_config').dataTable({
+        "columnDefs": [
+            { "sortable": false, "targets": [0, 3, 5] }
+        ],
+        "order": [
+            [1, 'asc']
+        ],
+    });
+
+</script>
+</body>
+</html>
