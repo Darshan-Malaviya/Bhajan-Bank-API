@@ -1,0 +1,52 @@
+<%- include('../../layouts/header.ejs') %>
+<style>
+
+</style>
+<%- include('../../layouts/sidebar.ejs') %>
+
+<div class="col-md-6">
+  <div class="card">
+    <div class="card-body">
+
+      <% if (operation != 'view') { %>
+      <form action="/admin/<%= table %>/<%= operation %>/<% if(locals.id){ %><%= id %><% } %>" method="POST" id="mainform" enctype="application/x-www-form-urlencoded">
+        <input type="hidden" name="csrfToken" value="<% if(locals.csrfToken){ %><%= csrfToken %><% } %>" class="form-control">
+        <% } %>
+
+        <% if(locals.id){ %><div class="form-group"><span style="font-weight: bold;"><%= id %></span></div><% } %>
+
+        <div id="div_id_name" class="form-group">
+          <label for="id_name" class="requiredField">
+            Name<span class="asteriskField">*</span>
+          </label>
+          <div class="">
+            <input type="text" name="name" maxlength="50" class="textinput textInput form-control ui-autocomplete-input" required="" id="id_name" value="<% if(locals.row){ %><%= row.name %><% } %>" autocomplete="off" <% if (operation == 'view') { %>disabled<% } %> />
+          </div>
+        </div>
+        <div id="div_id_displayPosition" class="form-group">
+          <label for="id_displayPosition" class="">
+            Display Position<span class="asteriskField">*</span>
+          </label>
+          <div class="">
+            <input type="number" name="displayPosition" min="0" max="99" class="textinput textInput form-control" required value="<% if(locals.row){ %><%= row.displayPosition %><% } %>" id="id_displayPosition" <% if (operation == 'view') { %>disabled<% } %> />
+            <small id="hint_id_displayPosition" class="form-text text-muted">Enter the position of the category in the list of categories.</small>
+          </div>
+        </div>
+        <div id="div_id_active" class="form-check form-group">
+          <div class=""> <input type="checkbox" name="isActive" class="checkboxinput form-check-input" id="id_active" <% if(locals.row){ %> <% if(row.isActive) { %> checked <%}%><% } else{ %>checked <% } %> <% if (operation == 'view') { %>disabled<% } %>>
+          </div><label for="id_active" class="form-check-label">
+            is Active
+          </label>
+        </div>
+        <% if (operation != 'view') { %>
+        <button type="submit" class="btn btn-success">Save</button>
+      </form>
+      <% } %>
+    </div>
+  </div>
+</div>
+<%- include('../../layouts/footer.ejs') %>
+<script></script>
+</body>
+
+</html>

@@ -12,13 +12,6 @@ export const permissionsController = async (req, res) => {
 
 export const permissionViewController = async (req, res) => {
     const id = req.params.id;
-
-    const validateResult = idValidator(id);
-    if (validateResult.error) {
-        messagePusher(req, "danger", validateResult.error.message);
-        return res.redirect("/admin/permission");
-    }
-
     var row = await Permission.findById(id).populate('contentType');
     const resParams = {
         pagePath: "Permission / View",
@@ -84,12 +77,6 @@ export const permissionCreatePostController = async (req, res) => {
 export const permissionUpdateGetController = async (req, res) => {
     const id = req.params.id;
 
-    const validateResult = idValidator(id);
-    if (validateResult.error) {
-        messagePusher(req, "danger", validateResult.error.message);
-        return res.redirect("/admin/permission");
-    }
-
     const csrfToken = randomStringFromCrypto(16);
     redisSet(csrfToken, "csrfToken", 60 * 5); // 5 minutes
 
@@ -143,13 +130,6 @@ export const permissionUpdatePostController = async (req, res, next) => {
 
 export const permissionDeleteController = (req, res) => {
     const id = req.params.id;
-
-    const validateResult = idValidator(id);
-    if (validateResult.error) {
-        messagePusher(req, "danger", validateResult.error.message);
-        return res.redirect("/admin/permission");
-    }
-
     Permission.findByIdAndDelete(id, (err, row) => {
         if (err) {
             messagePusher(req, "danger", "Permission not deleted");

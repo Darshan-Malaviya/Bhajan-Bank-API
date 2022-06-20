@@ -45,7 +45,7 @@ export const contentTypeCreatePostController = async (req, res) => {
             ContentType.create({
                 name: req.body.name,
                 identifier: req.body.identifier,
-                description: req.body.description,
+                description: req.body.description
             }, (err, contentType) => {
                 if (err) {
                     messagePusher(req, "danger", "ContentType not created\nError : " + err);
@@ -93,11 +93,9 @@ export const contentTypeUpdatePostController = async (req, res, next) => {
         const csrfValue = await redisGet(csrfToken);
         if (csrfValue) {
             ContentType.findByIdAndUpdate(id, {
-                title: req.body.title,
-                author: req.body.author,
-                publisher: req.body.publisher,
-                description: req.body.description,
-                isActive: req.body.isActive,
+                name: req.body.name,
+                identifier: req.body.identifier,
+                description: req.body.description
             }, (err, doc) => {
                 if (err) {
                     if (err.name === 'CastError') {

@@ -23,6 +23,12 @@ const adminSchema = new mongoose.Schema(
 			type: Boolean,
 			default: false,
 		},
+		permissions: [
+			{
+				type: mongoose.Schema.Types.ObjectId,
+				ref: "Permission",
+			},
+		],
 	},
 	{ timestamps: true }
 );

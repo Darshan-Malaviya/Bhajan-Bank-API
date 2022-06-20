@@ -6,7 +6,6 @@ import { redisSet, redisGet } from "../../database/redisDb.js";
 import { idValidator } from "../helpers/validation.js";
 
 export const booksController = async (req, res) => {
-	console.log(req.session.user);
 	var books = await Book.aggregate([
 		{
 			$addFields: {
@@ -28,12 +27,6 @@ export const booksController = async (req, res) => {
 
 export const bookViewController = async (req, res) => {
 	const id = req.params.id;
-
-	const validateResult = idValidator(id);
-	if (validateResult.error) {
-		messagePusher(req, "danger", validateResult.error.message);
-		return res.redirect("/admin/book");
-	}
 
 	var book = await Book.findById(id);
 	if (book) {
@@ -101,12 +94,6 @@ export const bookCreatePostController = async (req, res) => {
 export const bookUpdateGetController = async (req, res) => {
 	const id = req.params.id;
 
-	const validateResult = idValidator(id);
-	if (validateResult.error) {
-		messagePusher(req, "danger", validateResult.error.message);
-		return res.redirect("/admin/book");
-	}
-
 	const csrfToken = randomStringFromCrypto(16);
 	redisSet(csrfToken, "csrfToken", 60 * 5); // 5 minutes
 
@@ -162,13 +149,6 @@ export const bookUpdatePostController = async (req, res, next) => {
 
 export const bookDeleteController = (req, res) => {
 	const id = req.params.id;
-
-	const validateResult = idValidator(id);
-	if (validateResult.error) {
-		messagePusher(req, "danger", validateResult.error.message);
-		return res.redirect("/admin/book");
-	}
-
 	Book.findByIdAndDelete(id, (err, book) => {
 		if (err) {
 			messagePusher(req, "danger", "Book not deleted");

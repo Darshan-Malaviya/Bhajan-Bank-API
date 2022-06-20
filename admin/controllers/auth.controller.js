@@ -55,7 +55,7 @@ export const loginPostController = async (req, res) => {
     return res.redirect("/admin/login");
 }
 
-export const logoutGetController = (req, res) => {
+export const logoutController = (req, res) => {
     req.session.destroy();
     messagePusher(req, "success", "Logout successfully");
     return res.redirect("/admin/login");

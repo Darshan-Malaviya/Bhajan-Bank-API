@@ -5,7 +5,8 @@ import bookRouter from "./book.route.js";
 import contentTypeRouter from "./contentType.route.js";
 import permissionRouter from "./permission.route.js";
 import adminRouter from "./admin.route.js";
-import { loginGetController, loginPostController } from "../controllers/auth.controller.js";
+import categoryRouter from "./category.route.js";
+import { loginGetController, loginPostController, logoutController } from "../controllers/auth.controller.js";
 import { userVerification } from "../middlewares/userVerification.middleware.js";
 
 const router = express.Router();
@@ -23,9 +24,13 @@ router.get("/", userVerification, homeController);
 
 router.get("/login", loginGetController);
 router.post("/login", loginPostController);
+router.get("/logout", logoutController);
 
 // admin/books
 router.use("/book", userVerification, bookRouter);
+
+// admin/category
+router.use("/category", userVerification, categoryRouter);
 
 // admin/contentType
 router.use("/contentType", userVerification, contentTypeRouter);

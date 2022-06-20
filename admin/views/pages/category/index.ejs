@@ -1,0 +1,170 @@
+<%- include('../../layouts/header.ejs') %>
+<style>
+
+</style>
+<%- include('../../layouts/sidebar.ejs') %>
+<div class="card">
+  <div class="card-body">
+    <div class="row" style="margin-left: 1%;margin-bottom: 20px;">
+      <a href="/admin/<%= table %>/create" class="btn btn-primary" id="addbtn" data-toggle="tooltip" title="Add New <%= table %>">
+        <i class="fa fa-plus" aria-hidden="true"></i>
+      </a>
+      <a class="btn btn-danger" href="#" id="bulkdeletebtn" data-toggle="tooltip" title="Select Multiple Data and Delete at once." style="margin-left: 5px">
+        Delete Selected
+      </a>
+    </div>
+
+    <div class="table-responsive">
+      <table id="zero_config" class="table table-striped">
+        <thead class="thead-light">
+
+          <tr>
+            <th>Sorting</th>
+            <th>Name</th>
+            <th>is Active</th>
+            <th class="text-right">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <%for(var i=0; i < rows.length; i++) { %>
+          <% var row=rows[i] %>
+          <tr id="<%= row._id %>">
+            <td>
+              <%= row.displayPosition %>
+            </td>
+            <td data-toggle="tooltip" title="<%= row._id %>">
+              <%= row.name %>
+            </td>
+            <td>
+              <div class="custom-control custom-switch">
+                <input type="checkbox" class="custom-control-input" data-id="<%= row._id %>" id="customSwitch<%= row._id %>" <% if (row.isActive) { %>checked<% } %>>
+                <label class="custom-control-label" for="customSwitch<%= row._id %>"></label>
+              </div>
+            </td>
+            <td class="text-right">
+              <div class="call-chat">
+                <a href="/admin/<%= table %>/view/<%= row._id %>" class="btn btn-warning a-btn-slide-text btn-success">
+                  <i class="fas fa-eye-slash"></i>
+                </a>
+                <a href="/admin/<%= table %>/update/<%= row._id %>" class="btn btn-success a-btn-slide-text btn-success">
+                  <i class="fas fa-edit"></i>
+                </a>
+                <button data-href="/admin/<%= table %>/delete/<%= row._id %>" class="btn btn-danger a-btn-slide-text btn-danger deletebtn">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+          <% } %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+<%- include('../../layouts/footer.ejs') %>
+<script>
+  var myTable = $("#zero_config");
+
+  $(document).ready(function() {
+    // Setup - add a text input to each footer cell
+    $('#zero_config thead tr')
+      .clone(true)
+      .addClass('filters')
+      .appendTo('#zero_config thead');
+
+    var table = $('#zero_config').DataTable({
+      orderCellsTop: true,
+      fixedHeader: true,
+      initComplete: function() {
+        var api = this.api();
+
+        // For each column
+        api
+          .columns()
+          .eq(0)
+          .each(function(colIdx) {
+            // Set the header cell to contain the input element
+            var cell = $('.filters th').eq(
+              $(api.column(colIdx).header()).index()
+            );
+            var title = $(cell).text();
+            $(cell).html('<input type="text" placeholder="' + title + '" />');
+
+            // On every keypress in this input
+            $(
+                'input',
+                $('.filters th').eq($(api.column(colIdx).header()).index())
+              )
+              .off('keyup change')
+              .on('change', function(e) {
+                // Get the search value
+                $(this).attr('title', $(this).val());
+                var regexr = '({search})'; //$(this).parents('th').find('select').val();
+
+                var cursorPosition = this.selectionStart;
+                // Search the column for that value
+                api
+                  .column(colIdx)
+                  .search(
+                    this.value != '' ?
+                    regexr.replace('{search}', '(((' + this.value + ')))') :
+                    '',
+                    this.value != '',
+                    this.value == ''
+                  )
+                  .draw();
+              })
+              .on('keyup', function(e) {
+                e.stopPropagation();
+
+                $(this).trigger('change');
+                $(this)
+                  .focus()[0]
+                  .setSelectionRange(cursorPosition, cursorPosition);
+              });
+          });
+      },
+    });
+  });
+
+  $(document).ready(function() {
+    $("input[type=checkbox]").on('change', function() {
+      var $this = $(this);
+      $(this).attr('disabled', true);
+      var id = $(this).attr('data-id');
+      var isActive = $(this).is(':checked');
+      var url = '/admin/<%= table %>/update-status/' + id;
+      var data = {
+        isActive: isActive,
+      };
+      $.ajax({
+        url: url,
+        type: 'POST',
+        data: data,
+        success: function(res) {
+          // console.log(res);
+          iziToast.success({
+            title: 'Success',
+            message: res,
+            position: 'topRight'
+          });
+          // console.log(res);
+        },
+        error: function(err) {
+          $this.prop('checked', !isActive);
+          iziToast.error({
+            title: 'Error',
+            message: err.responseText,
+            position: 'topRight'
+          });
+
+          // console.log(err);
+        },
+      });
+      $(this).attr('disabled', false);
+    });
+  })
+</script>
+</body>
+
+</html>

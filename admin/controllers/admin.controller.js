@@ -11,7 +11,7 @@ export const adminsController = async (req, res) => {
 }
 
 export const adminViewController = async (req, res) => {
-    const id = req.params.id;
+    const id = req.params.id
 
     const validateResult = idValidator(id);
     if (validateResult.error) {
@@ -86,12 +86,6 @@ export const adminCreatePostController = async (req, res) => {
 export const adminUpdateGetController = async (req, res) => {
     const id = req.params.id;
 
-    const validateResult = idValidator(id);
-    if (validateResult.error) {
-        messagePusher(req, "danger", validateResult.error.message);
-        return res.redirect("/admin/admin");
-    }
-
     const csrfToken = randomStringFromCrypto(16);
     redisSet(csrfToken, "csrfToken", 60 * 5); // 5 minutes
 
@@ -143,12 +137,6 @@ export const adminUpdatePostController = async (req, res, next) => {
 export const adminDeleteController = (req, res) => {
     const id = req.params.id;
 
-    const validateResult = idValidator(id);
-    if (validateResult.error) {
-        messagePusher(req, "danger", validateResult.error.message);
-        return res.redirect("/admin/admin");
-    }
-
     Admin.findByIdAndDelete(id, (err, row) => {
         if (err) {
             messagePusher(req, "danger", "Admin not deleted");
@@ -166,3 +154,31 @@ export const adminDeleteController = (req, res) => {
         res.redirect("/admin/admin");
     });
 };
+
+export const adminUsersPermissionGetController = async (req, res) => {
+    const id = req.params.id;
+
+    const csrfToken = randomStringFromCrypto(16);
+    redisSet(csrfToken, "csrfToken", 60 * 5); // 5 minutes
+
+    const row = await Admin.findById(id);
+    const resParams = {
+        pagePath: row.name + "'s Permission",
+        title: row.name + "'s Permission",
+        operation: "usersPermission",
+        row: row,
+        id: id,
+        table: "admin",
+    };
+    res.render("pages/admin/usersPermission", resParams);
+}
+
+export const adminUsersPermissionPostController = async (req, res) => {
+    const id = req.params.id
+
+    const validateResult = idValidator(id);
+    if (validateResult.error) {
+        messagePusher(req, "danger", validateResult.error.message);
+        return res.redirect("/admin/admin");
+    }
+}

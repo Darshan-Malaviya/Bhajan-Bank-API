@@ -7,6 +7,7 @@ import bodyParser from "body-parser";
 import db from "./database/db.js";
 import apiRouter from "./routes/index.js";
 import adminRouter from "./admin/routes/index.js";
+import { Admin, Permission } from "./admin/models/index.js";
 
 const PORT = process.env.port || 8000;
 
@@ -38,7 +39,6 @@ app.use((req, res, next) => {
 	next();
 });
 
-
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
@@ -54,7 +54,38 @@ app.use("/admin", adminRouter);
 app.use("/api", apiRouter);
 
 app.get("/", (req, res) => {
-	res.send({ status: true, message: "Hello World" });
+
+	Permission.aggregate([
+		{ $match: { isActive: true } },
+		{ $lookup: { from: "contenttypes", localField: "contentType", foreignField: "_id", as: "contentType" } },
+		{
+			$group: {
+				_id: "$contentType.identifier",
+				permissions: {
+					$push: "$name",
+				},
+			}
+		},
+		{
+			$set: {
+				contentType: {
+					$arrayElemAt: ["$_id", 0],
+				}
+			},
+		},
+		{
+			$project: {
+				_id: 0,
+				contentType: 1,
+				permissions: 1,
+			}
+		},
+	])
+		.then(permissions => {
+			res.send(permissions);
+		}).catch(err => {
+			res.send(err);
+		});
 });
 
 // Start the server

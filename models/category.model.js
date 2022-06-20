@@ -7,13 +7,12 @@ const categorySchema = new mongoose.Schema(
 			required: true,
 			maxLength: 50,
 		},
-		is_sorting: {
+		displayPosition: {
 			type: Number,
 		},
-		is_active: {
-			type: Number,
-			required: true,
-			maxLength: 1,
+		isActive: {
+			type: Boolean,
+			default: true,
 		},
 	},
 	{ timestamps: true }
