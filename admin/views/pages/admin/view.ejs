@@ -1,71 +1,136 @@
-<%- include('../../layouts/header.ejs') %>
+<%- include('../../layouts/head.ejs') %>
 <style>
 
 </style>
 <%- include('../../layouts/sidebar.ejs') %>
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-6">
+      <div class="card card-primary">
+        <!-- <div class="card-header">
+          <h3 class="card-title">Quick Example</h3>
+        </div> -->
+        <% if (operation != 'view') { %>
+        <form id="mainform">
+          <input type="hidden" name="csrfToken" value="<% if(locals.csrfToken){ %><%= csrfToken %><% } %>" class="form-control">
+          <% } %>
 
-<div class="col-md-6">
-  <div class="card">
-    <div class="card-body">
-
-      <% if (operation != 'view') { %>
-      <form action="/admin/<%= table %>/<%= operation %>/<% if(locals.id){ %><%= id %><% } %>" method="POST" id="mainform" enctype="application/x-www-form-urlencoded">
-        <input type="hidden" name="csrfToken" value="<% if(locals.csrfToken){ %><%= csrfToken %><% } %>" class="form-control">
-        <% } %>
-        
           <% if(locals.id){ %><div class="form-group"><span style="font-weight: bold;"><%= id %></span></div><% } %>
 
-        <div id="div_id_name" class="form-group">
-          <label for="id_name" class="requiredField">
-            Name<span class="asteriskField">*</span>
-          </label>
-          <div class="">
-            <input type="text" name="name" class="textinput textInput form-control ui-autocomplete-input" required="" id="id_name" value="<% if(locals.row){ %><%= row.name %><% } %>" autocomplete="off" <% if (operation == 'view') { %>disabled<% } %> />
+          <div class="card-body">
+            <div class="form-group">
+              <label for="name">Name</label>
+              <input type="text" class="form-control" name="name" id="name" placeholder="Enter name" value="<% if(locals.row){ %><%= row.name %><% } %>" <% if (operation == 'view') { %>disabled<% } %>>
+            </div>
+            <div class="form-group">
+              <label for="email">Email</label>
+              <input type="text" class="form-control" name="email" id="email" placeholder="Enter email" value="<% if(locals.row){ %><%= row.email %><% } %>" <% if (operation == 'view') { %>disabled<% } %>>
+            </div>
+            <% if (operation == 'create') { %>
+            <div class="form-group">
+              <label for="password">Password</label>
+              <input type="password" class="form-control" name="password" id="password" placeholder="Enter Password" value="<% if(locals.row){ %><%= row.password %><% } %>">
+            </div>
+            <% } %>
           </div>
-        </div>
-        <div id="div_id_email" class="form-group">
-          <label for="id_email" class="">
-            Email
-          </label>
-          <div class="">
-            <input type="email" name="email" class="textinput textInput form-control" value="<% if(locals.row){ %><%= row.email %><% } %>" id="id_email" <% if (operation == 'view') { %>disabled<% } %> />
-            <small id="hint_id_email" class="form-text text-muted">Enter name of the
-              email.</small>
+          <% if (operation != 'view') { %>
+          <div class="card-footer">
+            <button type="submit" class="btn btn-success float-right">Submit</button>
           </div>
-        </div>
-        <% if (operation == 'create') { %>
-        <div id="div_id_password" class="form-group">
-          <label for="id_password" class="">
-            Password
-          </label>
-          <div class="">
-            <input type="password" name="password" class="textinput textInput form-control" value="<% if(locals.row){ %><%= row.password %><% } %>" id="id_password" <% if (operation == 'view') { %>disabled<% } %> />
-            <small id="hint_id_password" class="form-text text-muted">Enter name of the
-              Password.</small>
-          </div>
-        </div>
+        </form>
         <% } %>
-        <div id="div_id_active" class="form-check form-group">
-          <div class=""> <input type="checkbox" name="isActive" class="checkboxinput form-check-input" id="id_active" <% if(locals.row){ %> <% if(row.isActive) { %> checked <%}%><% } else{ %>checked <% } %> <% if (operation == 'view') { %>disabled<% } %>>
-          </div><label for="id_active" class="form-check-label">
-            is Active
-          </label>
-        </div>
-        <div id="div_id_superuser" class="form-check form-group">
-          <div class=""> <input type="checkbox" name="isSuperUser" class="checkboxinput form-check-input" id="id_superuser" <% if(locals.row){ %> <% if(row.isSuperUser) { %> checked <%}%><% } %> <% if (operation == 'view') { %>disabled<% } %>>
-          </div><label for="id_superuser" class="form-check-label">
-            is Super User
-          </label>
-        </div>
-        <% if (operation != 'view') { %>
-        <button type="submit" class="btn btn-success">Save</button>
-      </form>
-      <% } %>
+      </div>
     </div>
   </div>
 </div>
+
+
 <%- include('../../layouts/footer.ejs') %>
-<script></script>
+<script>
+  $().ready(function() {
+
+
+    var mainForm = $('#mainform').validate({
+      rules: {
+        name: {
+          required: true,
+          minlength: 3,
+          maxlength: 30
+        },
+        email: {
+          required: true,
+          email: true,
+        },
+        password: {
+          required: true,
+          minlength: 6,
+          maxlength: 30
+        }
+      },
+      messages: {
+        name: {
+          required: "Please enter a name",
+          minlength: "Name must consist of at least 3 characters",
+          maxlength: "Name must consist of at least 30 characters"
+        },
+        email: {
+          required: "Please enter a email",
+          email: "Please enter a valid email address"
+        },
+        password: {
+          required: "Please enter a password",
+          minlength: "Password must be at least 6 characters long",
+          maxlength: "Password must be at less than 30 characters long"
+        }
+      },
+      errorElement: 'span',
+      errorPlacement: function(error, element) {
+        error.addClass('invalid-feedback');
+        element.closest('.form-group').append(error);
+      },
+      highlight: function(element, errorClass, validClass) {
+        $(element).addClass('is-invalid');
+      },
+      unhighlight: function(element, errorClass, validClass) {
+        $(element).removeClass('is-invalid');
+      }
+    });
+
+    $("form#mainform").submit(() => {
+      if (mainForm.valid()) {
+        $.ajax({
+          url: "/admin/<%= table %>/<%= operation %>/<% if(locals.id){ %><%= id %><% } %>",
+          type: "POST",
+          data: $("form#mainform").serialize(),
+          success: function(data) {
+            if (data.status) {
+              Toast.fire({
+                icon: 'success',
+                title: data.message
+              });
+            } else {
+              Toast.fire({
+                icon: 'error',
+                title: data.message
+              });
+            }
+          },
+          error: function(data) {
+            Toast.fire({
+              icon: 'error',
+              title: data
+            });
+          }
+        });
+
+      } else {
+        mainForm.focusInvalid();
+      }
+      return false;
+    });
+  });
+</script>
+
 </body>
 
 </html>

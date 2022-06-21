@@ -18,6 +18,9 @@ export const messageMiddleware = (req, res, next) => {
 };
 
 export const messagePusher = (req, type, mesBody) => {
+	if (type == 'danger') {
+		type = 'error';
+	}
 	var messages = [];
 	var oldMessages = req.app.locals.mesContext;
 	messages.push({

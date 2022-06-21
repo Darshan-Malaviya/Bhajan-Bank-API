@@ -8,6 +8,7 @@ import db from "./database/db.js";
 import apiRouter from "./routes/index.js";
 import adminRouter from "./admin/routes/index.js";
 import { Admin, Permission } from "./admin/models/index.js";
+import { getBreadcrumbs } from "./admin/middlewares/breadcrumbs.middleware.js";
 
 const PORT = process.env.port || 8000;
 
@@ -48,7 +49,7 @@ app.use("/public", express.static("public"));
 app.use("/admin/public", express.static("admin/public"));
 
 // admin routes
-app.use("/admin", adminRouter);
+app.use("/admin", getBreadcrumbs, adminRouter);
 
 // api routes
 app.use("/api", apiRouter);

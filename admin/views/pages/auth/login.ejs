@@ -9,12 +9,13 @@
   <title>Login &mdash; Kalakunj Mandir</title>
 
   <!-- General CSS Files -->
-  <link rel="stylesheet" href="/admin/public/css/bootstrap.min.css" />
-  <link rel="stylesheet" href="/admin/public/css/fontawesome.min.css" />
+  <link rel="stylesheet" href="/admin/public/plugins/bootstrap/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="/admin/public/plugins/fontawesome-free/css/fontawesome.min.css" />
+  <link rel="stylesheet" href="/admin/public/plugins/sweetalert2/sweetalert2.min.css">
 
   <!-- Template CSS -->
-  <link rel="stylesheet" href="/admin/public/css/style.css" />
-  <link rel="stylesheet" href="/admin/public/css/components.css" />
+  <link rel="stylesheet" href="/admin/public/css/stisla.css" />
+  <link rel="stylesheet" href="/admin/public/css/stisla-components.css" />
 </head>
 
 <body>
@@ -32,13 +33,6 @@
               <div class="card-header">
                 <h4>Login</h4>
               </div>
-              <% if (locals.messages) { %> <% messages.forEach(element=> { %>
-              <div>
-                <div class="alert alert-<%= element.type %> m-2 show fade">
-                  <div class="alert-body"><%= element.message %></div>
-                </div>
-              </div>
-              <% }) %> <% } %>
 
               <div class="card-body">
                 <form class="form-horizontal m-t-20" id="loginform" action="/admin/login/" method="POST">
@@ -65,7 +59,7 @@
                   <div class="form-group" style="margin-bottom: 20%"></div>
 
                   <div class="form-group">
-                    <button type="submit" class="btn btn-success btn-lg btn-block" tabindex="4">
+                    <button type="submit" id="submitbtn" class="btn btn-success btn-lg btn-block" tabindex="4">
                       <i class="fa fa-sign-in"></i>Login
                     </button>
                   </div>
@@ -80,76 +74,83 @@
   </div>
 
   <!-- General JS Scripts -->
-  <script src="/static/new-dashboard/dist/js/jquery-3.4.1.js"></script>
-  <script src="/static/new-dashboard/dist/js/popper.min.js"></script>
-  <script src="/static/new-dashboard/dist/js/bootstrap.min.js"></script>
+  <script src="/admin/public/plugins/jquery/jquery.min.js"></script>
+  <script src="/admin/public/plugins/popper/popper.min.js"></script>
+  <script src="/admin/public/plugins/bootstrap/js/bootstrap.min.js"></script>
   <script src="/static/new-dashboard/dist/js/jquery-nicescroll.js"></script>
-  <script src="/static/new-dashboard/dist/js/moment.js"></script>
-  <script src="/static/new-dashboard/dist/js/stisla.js"></script>
+  <script src="/admin/public/plugins/moment/moment.min.js"></script>
+  <script src="/admin/public/plugins/sweetalert2/sweetalert2.min.js"></script>
+  <script src="/admin/public/plugins/jquery-validation/jquery.validate.min.js"></script>
+  <script src="/admin/public/plugins/jquery-validation/additional-methods.min.js"></script>
+  <script src="/admin/public/js/stisla.js"></script>
 
   <!-- Template JS File -->
-  <script src="/static/new-dashboard/dist/js/custom.js"></script>
-  <script src="/static/new-dashboard/dist/js/scripts.js"></script>
+  <script src="/admin/public/js/stisla-scripts.js"></script>
 
   <script>
-    // function validateForm() {
-    //   var has_error = false;
+    $(document).ready(function() {
+      $.validator.setDefaults({
+        submitHandler: function() {
+          $('#loginform').submit();
+        },
+      });
+      $('#loginform').validate({
+        rules: {
+          email: {
+            required: true,
+            email: true
+          },
+          password: {
+            required: true,
+            minlength: 8
+          }
+        },
+        messages: {
+          email: {
+            required: "Please enter your email",
+            email: "Please enter a valid email address"
+          },
+          password: {
+            required: "Please enter your password",
+            minlength: "Your password must be at least 8 characters long"
+          }
+        },
+        errorElement: "span",
+        errorPlacement: function(error, element) {
+          error.addClass("invalid-feedback");
+          element.closest(".form-group").append(error);
+        },
+        highlight: function(element, errorClass, validClass) {
+          $(element).addClass("is-invalid");
+        },
+        unhighlight: function(element, errorClass, validClass) {
+          $(element).removeClass("is-invalid");
+        }
+      });
+    });
 
-    //   var email = $('#id_email');
-    //   var password = $('#id_password');
+    // Toaster
+    var Toast = Swal.mixin({
+      toast: true,
+      position: 'top-end',
+      showConfirmButton: false,
+      timer: 3000
+    });
 
-    //   if (email.val() == '') {
-    //     email.addClass('is-invalid');
-    //     if ($('#error_1_id_email').length == 0) {
-    //       $('<p id="error_1_id_email" class="invalid-feedback"><strong>This field is required.</strong></p>').insertAfter(email);
-    //     }
-    //     has_error = true;
-    //   } else {
-    //     $('#error_1_id_email').remove();
-    //     email.removeClass('is-invalid');
-    //   }
+    var messages = [
+      <% if (locals.messages) { %>
+      <% messages.forEach(element=> { %> {
+        type: '<%= element.type %>',
+        message: '<%= element.message %>',
+      }
+      <% }); %>
+      <% } %>
+    ];
 
-    //   if (password.val() == '') {
-    //     password.addClass('is-invalid');
-    //     if ($('#error_1_id_password').length == 0) {
-    //       $('<p id="error_1_id_password" class="invalid-feedback"><strong>This field is required.</strong></p>').insertAfter(password);
-    //     }
-    //     has_error = true;
-    //   } else {
-    //     $('#error_1_id_password').remove();
-    //     password.removeClass('is-invalid');
-    //   }
-
-    //   if (has_error == true) {
-    //     return false;
-    //   }
-    // }
-
-    // $('#id_email').on('focus', function() {
-    //   $('#error_1_id_email').remove();
-    //   $('#error_1_id_password').remove();
-    //   $(this).removeClass('is-invalid');
-    //   $('#id_password').removeClass('is-invalid');
-    // })
-
-    // $('#id_password').on('focus', function() {
-    //   $('#error_1_id_email').remove();
-    //   $('#error_1_id_password').remove();
-    //   $(this).removeClass('is-invalid');
-    //   $('#id_email').removeClass('is-invalid');
-    // })
-
-    var alerts = document.getElementsByClassName("alert");
-    for (let i = 0; i < alerts.length; i++) {
-      const element = alerts[i];
-      setTimeout(function() {
-        element.remove();
-      }, 10000);
-    }
-    $(".alert").each(function() {
-      var $this = $(this);
-      $this.on("click", function() {
-        $this.toggle();
+    messages.forEach(element => {
+      Toast.fire({
+        icon: element.type,
+        title: element.message
       });
     });
   </script>

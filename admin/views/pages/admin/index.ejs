@@ -1,89 +1,181 @@
-<%- include('../../layouts/header.ejs') %>
+<%- include('../../layouts/head.ejs') %>
 <style>
 
 </style>
 <%- include('../../layouts/sidebar.ejs') %>
-<div class="card">
-  <div class="card-body">
-    <div class="row" style="margin-left: 1%;margin-bottom: 20px;">
-      <a href="/admin/<%= table %>/create" class="btn btn-primary" id="addbtn" data-toggle="tooltip" title="Add New Book">
-        <i class="fa fa-plus" aria-hidden="true"></i>
-      </a>
-      <a class="btn btn-danger" href="/admin/<%= table %>/delete" id="bulkdeletebtn" data-toggle="tooltip" title="Select Multiple Data and Delete at once." style="margin-left: 5px">
-        Delete Selected
-      </a>
-    </div>
 
-    <div class="table-responsive">
-      <table id="zero_config" class="table table-striped">
-        <thead class="thead-light">
-
-          <tr>
-            <th class="text-center">
-              <div class="custom-checkbox custom-control">
-                <input type="checkbox" data-checkboxes="mygroup" data-checkbox-role="dad" class="custom-control-input" id="checkbox-all" />
-                <label for="checkbox-all" class="custom-control-label">&nbsp;</label>
-              </div>
-            </th>
-            <th>Name</th>
-            <th>Email</th>
-            <th>IsActive</th>
-            <th>IsSuperUser</th>
-            <th class="text-right">Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          <%for(var i=0; i < rows.length; i++) { %>
-          <% var row=rows[i] %>
-          <tr id="<%= row._id %>">
-            <td class="text-center">
-              <div class="custom-checkbox custom-control">
-                <input type="checkbox" data-checkboxes="mygroup" class="custom-control-input" id="checkbox-<%= row._id %>" value="" />
-                <label for="checkbox-" class="custom-control-label">&nbsp;</label>
-              </div>
-            </td>
-            <td data-toggle="tooltip" title="<%= row._id %>">
-              <%= row.name %>
-            </td>
-            <td>
-              <%= row.email %>
-            </td>
-            <td>
-              <%= row.isActive %>
-            </td>
-            <td>
-              <%= row.isSuperUser %>
-            </td>
-            <td class="text-right">
-              <div class="call-chat">
-                <a href="/admin/admin/usersPermission/<%= row._id %>" class="btn btn-warning a-btn-slide-text btn-success">
-                  <i class="fas fa-user-shield"></i>
-                </a>
-                <a href="/admin/<%= table %>/view/<%= row._id %>" class="btn btn-warning a-btn-slide-text btn-success">
-                  <i class="fas fa-eye-slash"></i>
-                </a>
-                <a href="/admin/<%= table %>/update/<%= row._id %>" class="btn btn-success a-btn-slide-text btn-success">
-                  <i class="fas fa-edit"></i>
-                </a>
-                <button data-href="/admin/<%= table %>/delete/<%= row._id %>" class="btn btn-danger a-btn-slide-text btn-danger deletebtn">
-                  <i class="fas fa-trash"></i>
-                </button>
-              </div>
-            </td>
-          </tr>
-          <% } %>
-        </tbody>
-      </table>
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="card card-primary">
+        <div class="card-body">
+          <table id="zero_config" class="table table-bordered table-striped">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Active</th>
+                <th>Super User</th>
+                <th class="text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <%for(var i=0; i < rows.length; i++) { %>
+              <% var row=rows[i] %>
+              <tr id="row<%= row._id %>">
+                <td data-toggle="tooltip" title="<%= row._id %>">
+                  <%= row.name %>
+                </td>
+                <td>
+                  <%= row.email %>
+                </td>
+                <td>
+                  <div class="custom-control custom-switch">
+                    <input type="checkbox" class="custom-control-input activeCheckbox" data-id="<%= row._id %>" id="active<%= row._id %>" <% if (row.isActive) { %>checked<% } %>>
+                    <label class="custom-control-label" for="active<%= row._id %>"></label>
+                  </div>
+                </td>
+                <td>
+                  <div class="custom-control custom-switch">
+                    <input type="checkbox" class="custom-control-input superuserCheckbox" data-id="<%= row._id %>" id="superuser<%= row._id %>" <% if (row.isSuperUser) { %>checked<% } %>>
+                    <label class="custom-control-label" for="superuser<%= row._id %>"></label>
+                  </div>
+                </td>
+                <td class="text-right">
+                  <div class="call-chat">
+                    <a href="/admin/<%= table %>/view/<%= row._id %>" class="btn a-btn-slide-text btn-outline-info btn-sm">
+                      <i class="fas fa-eye-slash"></i>
+                    </a>
+                    <a href="/admin/<%= table %>/update/<%= row._id %>" class="btn a-btn-slide-text btn-outline-warning btn-sm">
+                      <i class="fas fa-edit"></i>
+                    </a>
+                    <button data-href="/admin/<%= table %>/delete/<%= row._id %>" data-id="<%= row._id %>" class="btn a-btn-slide-text btn-outline-danger btn-sm btn-delete">
+                      <i class="fas fa-trash"></i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+              <% } %>
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
   </div>
 </div>
+
 <%- include('../../layouts/footer.ejs') %>
 <script>
-  $('#zero_config').dataTable({
-    "columnDefs": [{
-      "sortable": false,
-      "targets": [0, 5]
-    }],
+  $(document).ready(function() {
+
+    $(".activeCheckbox").on('change', function() {
+      var $this = $(this);
+      $(this).attr('disabled', true);
+      var id = $(this).attr('data-id');
+      var isActive = $(this).is(':checked');
+      var url = '/admin/<%= table %>/update-status/' + id;
+      var data = {
+        isActive: isActive,
+      };
+      $.ajax({
+        url: url,
+        type: 'POST',
+        data: data,
+        success: function(data) {
+          if (data.status) {
+            Toast.fire({
+              icon: 'success',
+              title: data.message
+            });
+          } else {
+            Toast.fire({
+              icon: 'error',
+              title: data.message
+            });
+          }
+        },
+        error: function(data) {
+          $this.prop('checked', !isActive);
+          Toast.fire({
+            icon: 'error',
+            title: data
+          });
+        },
+      });
+      $(this).attr('disabled', false);
+    });
+
+    $(".superuserCheckbox").on('change', function() {
+      var $this = $(this);
+      $this.attr('disabled', true);
+      var id = $(this).attr('data-id');
+      var isSuperUser = $(this).is(':checked');
+      var url = '/admin/<%= table %>/update-superuser/' + id;
+      var data = {
+        isSuperUser: isSuperUser,
+      };
+      $.ajax({
+        url: url,
+        type: 'POST',
+        data: data,
+        success: function(data) {
+          if (data.status) {
+            Toast.fire({
+              icon: 'success',
+              title: data.message
+            });
+          } else {
+            Toast.fire({
+              icon: 'error',
+              title: data.message
+            });
+          }
+        },
+        error: function(data) {
+          $this.prop('checked', !isSuperUser);
+          Toast.fire({
+            icon: 'error',
+            title: data
+          });
+        },
+      });
+      $this.attr('disabled', false);
+    })
+
+    $('.btn-delete').on('click', function() {
+      var $this = $(this);
+      var id = $this.attr('data-id');
+      var url = $this.attr('data-href');
+
+      $.ajax({
+        url: url,
+        type: 'DELETE',
+        success: function(data) {
+          if (data.status) {
+            Toast.fire({
+              icon: 'success',
+              title: data.message
+            });
+            $('#row' + id).remove();
+          } else {
+            Toast.fire({
+              icon: 'error',
+              title: data.message
+            });
+          }
+        },
+        error: function(data) {
+          console.log(data);
+          Toast.fire({
+            icon: 'error',
+            title: 'Something went wrong'
+          });
+        }
+      });
+    });
+
+    $('#zero_config').DataTable();
+
   });
 </script>
 </body>

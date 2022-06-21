@@ -1,52 +1,123 @@
-<%- include('../../layouts/header.ejs') %>
+<%- include('../../layouts/head.ejs') %>
 <style>
 
 </style>
 <%- include('../../layouts/sidebar.ejs') %>
-
-<div class="col-md-6">
-  <div class="card">
-    <div class="card-body">
-
-      <% if (operation != 'view') { %>
-      <form action="/admin/<%= table %>/<%= operation %>/<% if(locals.id){ %><%= id %><% } %>" method="POST" id="mainform" enctype="application/x-www-form-urlencoded">
-        <input type="hidden" name="csrfToken" value="<% if(locals.csrfToken){ %><%= csrfToken %><% } %>" class="form-control">
-        <% } %>
-
-        <% if(locals.id){ %><div class="form-group"><span style="font-weight: bold;"><%= id %></span></div><% } %>
-
-        <div id="div_id_name" class="form-group">
-          <label for="id_name" class="requiredField">
-            Name<span class="asteriskField">*</span>
-          </label>
-          <div class="">
-            <input type="text" name="name" maxlength="50" class="textinput textInput form-control ui-autocomplete-input" required="" id="id_name" value="<% if(locals.row){ %><%= row.name %><% } %>" autocomplete="off" <% if (operation == 'view') { %>disabled<% } %> />
-          </div>
-        </div>
-        <div id="div_id_displayPosition" class="form-group">
-          <label for="id_displayPosition" class="">
-            Display Position<span class="asteriskField">*</span>
-          </label>
-          <div class="">
-            <input type="number" name="displayPosition" min="0" max="99" class="textinput textInput form-control" required value="<% if(locals.row){ %><%= row.displayPosition %><% } %>" id="id_displayPosition" <% if (operation == 'view') { %>disabled<% } %> />
-            <small id="hint_id_displayPosition" class="form-text text-muted">Enter the position of the category in the list of categories.</small>
-          </div>
-        </div>
-        <div id="div_id_active" class="form-check form-group">
-          <div class=""> <input type="checkbox" name="isActive" class="checkboxinput form-check-input" id="id_active" <% if(locals.row){ %> <% if(row.isActive) { %> checked <%}%><% } else{ %>checked <% } %> <% if (operation == 'view') { %>disabled<% } %>>
-          </div><label for="id_active" class="form-check-label">
-            is Active
-          </label>
-        </div>
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-6">
+      <div class="card card-primary">
+        <!-- <div class="card-header">
+          <h3 class="card-title">Quick Example</h3>
+        </div> -->
         <% if (operation != 'view') { %>
-        <button type="submit" class="btn btn-success">Save</button>
-      </form>
-      <% } %>
+        <form id="mainform">
+          <input type="hidden" name="csrfToken" value="<% if(locals.csrfToken){ %><%= csrfToken %><% } %>" class="form-control">
+          <% } %>
+
+          <% if(locals.id){ %><div class="form-group"><span style="font-weight: bold;"><%= id %></span></div><% } %>
+
+          <div class="card-body">
+            <div class="form-group">
+              <label for="name">Name</label>
+              <input type="text" class="form-control" name="name" id="name" placeholder="Enter name" value="<% if(locals.row){ %><%= row.name %><% } %>" <% if (operation == 'view') { %>disabled<% } %>>
+            </div>
+            <div class="form-group">
+              <label for="displayPosition">Display Position</label>
+              <input type="number" class="form-control" name="displayPosition" id="displayPosition" placeholder="Enter number for Sorting Position" value="<% if(locals.row){ %><%= row.displayPosition %><% } %>" <% if (operation == 'view') { %>disabled<% } %>>
+            </div>
+          </div>
+          <% if (operation != 'view') { %>
+          <div class="card-footer">
+            <button type="submit" class="btn btn-success float-right">Submit</button>
+          </div>
+        </form>
+        <% } %>
+      </div>
     </div>
   </div>
 </div>
+
+
 <%- include('../../layouts/footer.ejs') %>
-<script></script>
+<script>
+  $().ready(function() {
+
+
+    var mainForm = $('#mainform').validate({
+      rules: {
+        name: {
+          required: true,
+          minlength: 3,
+          maxlength: 30
+        },
+        displayPosition: {
+          required: true,
+          number: true,
+          min: 1,
+          max: 99
+        }
+      },
+      messages: {
+        name: {
+          required: "Please enter a name",
+          minlength: "Name must consist of at least 3 characters"
+        },
+        displayPosition: {
+          required: "Please enter a sorting position",
+          number: "Display position must be a number"
+        }
+      },
+      errorElement: 'span',
+      errorPlacement: function(error, element) {
+        error.addClass('invalid-feedback');
+        element.closest('.form-group').append(error);
+      },
+      highlight: function(element, errorClass, validClass) {
+        $(element).addClass('is-invalid');
+      },
+      unhighlight: function(element, errorClass, validClass) {
+        $(element).removeClass('is-invalid');
+      }
+    });
+
+    $("form#mainform").submit(() => {
+      if (mainForm.valid()) {
+        $.ajax({
+          url: "/admin/<%= table %>/<%= operation %>/<% if(locals.id){ %><%= id %><% } %>",
+          type: "POST",
+          data: $("form#mainform").serialize(),
+          success: function(data) {
+            if (data.status) {
+              Toast.fire({
+                icon: 'success',
+                title: data.message
+              });
+            } else {
+              Toast.fire({
+                icon: 'error',
+                title: data.message
+              });
+            }
+          },
+          error: function(data) {
+            Toast.fire({
+              icon: 'error',
+              title: data.responseJSON
+            });
+          }
+        })
+
+      } else {
+        mainForm.focusInvalid();
+      }
+      return false;
+    });
+
+
+  });
+</script>
+
 </body>
 
 </html>

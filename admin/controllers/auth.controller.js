@@ -6,6 +6,9 @@ import { comparePassword } from "../helpers/password.js";
 
 export const loginGetController = (req, res) => {
     const next = req.query.next || "/admin";
+    if (req.session.user) {
+        return res.redirect(next);
+    }
     const csrfToken = randomStringFromCrypto(16);
     redisSet(csrfToken, "csrfToken", 60 * 1); // 1 minute
 
