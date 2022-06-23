@@ -105,4 +105,37 @@
       $this.toggleClass('fa-eye');
     });
   });
+
+  $(document).ready(function() {
+    $('#theme').on('change', function() {
+      var theme = $(this).val();
+      $.ajax({
+        url: '/admin/change-theme',
+        type: 'POST',
+        data: {
+          theme: theme == 'dark' ? 'light' : 'dark'
+        },
+        success: function(data) {
+          if (data.status) {
+            Toast.fire({
+              icon: 'success',
+              title: data.message
+            });
+            location.reload();
+          } else {
+            Toast.fire({
+              icon: 'error',
+              title: data.message
+            });
+          }
+        },
+        error: function(data) {
+          Toast.fire({
+            icon: 'error',
+            title: data.status + ' ' + data.statusText
+          });
+        }
+      });
+    });
+  });
 </script>

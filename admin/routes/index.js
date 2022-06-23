@@ -1,5 +1,5 @@
 import express from "express";
-import { homeController } from "../controllers/index.js";
+import { homeController, themeController } from "../controllers/index.js";
 import { messageMiddleware } from "../middlewares/message.middleware.js";
 // import bookRouter from "./book.route.js";
 import contentTypeRouter from "./contentType.route.js";
@@ -15,6 +15,7 @@ import {
 import { userVerification } from "../middlewares/user.middleware.js";
 import { breadcrumbMiddleware } from "../middlewares/breadcrumb.middleware.js";
 import { loginValidationMiddleware } from "../middlewares/validator.middleware.js";
+import { themeMiddleware } from "../middlewares/theme.middleware.js";
 
 const router = express.Router();
 
@@ -24,7 +25,11 @@ router.use(messageMiddleware);
 // breadcrumb middleware
 router.use(breadcrumbMiddleware);
 
+// theme middleware
+router.use(themeMiddleware);
+
 router.get("/", userVerification, homeController);
+router.post("/change-theme", userVerification, themeController);
 
 router.get("/login", loginGetController);
 router.post("/login", loginValidationMiddleware, loginPostController);
