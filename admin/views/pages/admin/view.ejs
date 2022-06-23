@@ -38,6 +38,7 @@
     </div>
 
     <% if(operation == 'update') { %>
+    <% if (new PermissionChecker(locals.user).hasPermission('edit_admin')) { %>
     <div class="col-md-6">
       <div class="card card-primary">
         <div class="card-header">
@@ -61,8 +62,9 @@
         </form>
       </div>
     </div>
+    <% } %>
 
-
+    <% if (new PermissionChecker(locals.user).hasPermission('handle_permissions')) { %>
     <div class="col-md-12">
       <div class="card card-primary">
 
@@ -99,6 +101,7 @@
 
       </div>
     </div>
+    <% } %>
     <% } %>
 
   </div>
@@ -199,7 +202,7 @@
       }
     });
 
-
+    <% if (new PermissionChecker(locals.user).hasAnyPermission(['create_admin','edit_admin'])) { %>
     $("form#mainform").submit(() => {
       if (mainForm.valid()) {
         $('#submitBtn').attr('disabled', true);
@@ -244,7 +247,9 @@
       }
       return false;
     });
+    <% } %>
 
+    <% if (new PermissionChecker(locals.user).hasPermission('edit_admin')) { %>
     $("form#passwordform").submit(() => {
       if (passwordform.valid()) {
         $('#passwordBtn').attr('disabled', true);
@@ -284,7 +289,10 @@
       }
       return false;
     });
+    <% } %>
 
+
+    <% if (new PermissionChecker(locals.user).hasPermission('handle_permissions')) { %>
     $("#permissionBtn").click(() => {
       $('#permissionBtn').attr('disabled', true);
       $('#permissionBtn').addClass('btn-progress');
@@ -339,7 +347,7 @@
       });
 
     });
-
+    <% } %>
 
   });
 </script>

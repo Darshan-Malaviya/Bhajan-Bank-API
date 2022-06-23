@@ -14,9 +14,13 @@
               <tr>
                 <th>Name</th>
                 <th>Email</th>
+                <% if (new PermissionChecker(locals.user).hasPermission('edit_admin')) { %>
                 <th>Active</th>
                 <th>Super User</th>
+                <% } %>
+                <% if (new PermissionChecker(locals.user).hasAnyPermission(['edit_admin','delete_admin'])) { %>
                 <th class="text-right">Actions</th>
+                <% } %>
               </tr>
             </thead>
             <tbody>
@@ -29,6 +33,7 @@
                 <td>
                   <%= row.email %>
                 </td>
+                <% if (new PermissionChecker(locals.user).hasPermission('edit_admin')) { %>
                 <td>
                   <div class="custom-control custom-switch">
                     <input type="checkbox" class="custom-control-input activeCheckbox" data-id="<%= row._id %>" id="active<%= row._id %>" <% if (row.isActive) { %>checked<% } %>>
@@ -41,16 +46,23 @@
                     <label class="custom-control-label" for="superuser<%= row._id %>"></label>
                   </div>
                 </td>
+                <% } %>
+                <% if (new PermissionChecker(locals.user).hasAnyPermission(['edit_admin','delete_admin'])) { %>
                 <td class="text-right">
                   <div class="call-chat">
+                    <% if (new PermissionChecker(locals.user).hasPermission('edit_admin')) { %>
                     <a href="/admin/<%= table %>/update/<%= row._id %>" class="btn a-btn-slide-text btn-outline-warning btn-sm">
                       <i class="fas fa-edit"></i>
                     </a>
+                    <% } %>
+                    <% if (new PermissionChecker(locals.user).hasPermission('delete_admin')) { %>
                     <button data-href="/admin/<%= table %>/delete/<%= row._id %>" data-id="<%= row._id %>" class="btn a-btn-slide-text btn-outline-danger btn-sm btn-delete">
                       <i class="fas fa-trash"></i>
                     </button>
+                    <% } %>
                   </div>
                 </td>
+                <% } %>
               </tr>
               <% } %>
             </tbody>
@@ -65,6 +77,7 @@
 <script>
   $(document).ready(function() {
 
+    <% if (new PermissionChecker(locals.user).hasPermission('edit_admin')) { %>
     $(".activeCheckbox").on('change', function() {
       var $this = $(this);
       $(this).attr('disabled', true);
@@ -139,6 +152,10 @@
       $this.attr('disabled', false);
     })
 
+    <% } %>
+
+    <% if (new PermissionChecker(locals.user).hasPermission('delete_admin')) { %>
+
     $('.btn-delete').on('click', function() {
       var $this = $(this);
       var id = $this.attr('data-id');
@@ -174,7 +191,7 @@
                 console.log(data);
                 Toast.fire({
                   icon: 'error',
-                  title: 'Something went wrong'
+                  title: data.status + ' ' + data.statusText
                 });
               }
             });
@@ -183,6 +200,8 @@
           }
         });
     });
+
+    <% } %>
 
     $('#zero_config').DataTable();
 

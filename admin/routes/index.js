@@ -13,7 +13,7 @@ import {
 	logoutController,
 } from "../controllers/auth.controller.js";
 import { userVerification } from "../middlewares/user.middleware.js";
-import { getBreadcrumbs } from "../middlewares/breadcrumbs.middleware.js";
+import { breadcrumbMiddleware } from "../middlewares/breadcrumb.middleware.js";
 import { loginValidationMiddleware } from "../middlewares/validator.middleware.js";
 
 const router = express.Router();
@@ -21,8 +21,8 @@ const router = express.Router();
 // messageMiddleware
 router.use(messageMiddleware);
 
-// admin public file serve
-router.use("/public", express.static("/admin/public"));
+// breadcrumb middleware
+router.use(breadcrumbMiddleware);
 
 router.get("/", userVerification, homeController);
 

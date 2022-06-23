@@ -15,7 +15,12 @@
                 <th>Name</th>
                 <th>type</th>
                 <th>ContentType</th>
+                <% if (new PermissionChecker(locals.user).hasPermission('edit_media')) { %>
+                <th>Active</th>
+                <% } %>
+                <% if (new PermissionChecker(locals.user).hasAnyPermission(['edit_media','delete_media'])) { %>
                 <th class="text-right">Actions</th>
+                <% } %>
               </tr>
             </thead>
             <tbody>
@@ -31,22 +36,30 @@
                 <td>
                   <%= row.contentType.identifier %>
                 </td>
+                <% if (new PermissionChecker(locals.user).hasPermission('edit_media')) { %>
                 <td>
                   <div class="custom-control custom-switch">
                     <input type="checkbox" class="custom-control-input" data-id="<%= row._id %>" id="customSwitch<%= row._id %>" <% if (row.isActive) { %>checked<% } %>>
                     <label class="custom-control-label" for="customSwitch<%= row._id %>"></label>
                   </div>
                 </td>
+                <% } %>
+                <% if (new PermissionChecker(locals.user).hasAnyPermission(['view_media','delete_media'])) { %>
                 <td class="text-right">
                   <div class="call-chat">
+                    <% if (new PermissionChecker(locals.user).hasPermission('view_media')) { %>
                     <button data-href="<%= row.url %>" data-contentType="<%= row.contentType.identifier %>" data-type="<%= row.type %>" data-name="<%= row.name %>" data-id="<%= row._id %>" class="btn btn-outline-info a-btn-slide-text btn-sm modal-view-btn">
                       <i class="fas fa-eye-slash" aria-hidden="true"></i>
                     </button>
+                    <% } %>
+                    <% if (new PermissionChecker(locals.user).hasPermission('delete_media')) { %>
                     <button data-href="/admin/<%= table %>/delete/<%= row._id %>" data-id="<%= row._id %>" class="btn a-btn-slide-text btn-outline-danger btn-sm btn-delete">
                       <i class="fas fa-trash"></i>
                     </button>
+                    <% } %>
                   </div>
                 </td>
+                <% } %>
               </tr>
               <% } %>
             </tbody>
@@ -79,6 +92,7 @@
 <script>
   $(document).ready(function() {
 
+    <% if (new PermissionChecker(locals.user).hasPermission('edit_media')) { %>
     $("input[type=checkbox]").on('change', function() {
       var $this = $(this);
       $(this).attr('disabled', true);
@@ -116,7 +130,9 @@
       });
       $(this).attr('disabled', false);
     });
+    <% } %>
 
+    <% if (new PermissionChecker(locals.user).hasPermission('delete_media')) { %>
     $('.btn-delete').on('click', function() {
       var $this = $(this);
       var id = $this.attr('data-id');
@@ -160,7 +176,9 @@
           }
         });
     });
+    <% } %>
 
+    <% if (new PermissionChecker(locals.user).hasPermission('view_media')) { %>
     $('.modal-view-btn').on('click', function() {
       var $this = $(this);
       var url = $this.attr('data-href');
@@ -176,6 +194,7 @@
       modal.find('.modal-body').html('<span class="text-center"> Url : ' + url + '</span></br></br><span class="text-center"> Content Type : ' + contentType + '</span></br></br><span class="text-center"> Type : ' + type + '</span>');
       modal.modal('show');
     });
+    <% } %>
 
     $('#zero_config').DataTable();
 

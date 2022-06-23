@@ -80,6 +80,7 @@
       }
     });
 
+    <% if (new PermissionChecker(locals.user).hasAnyPermission(['edit_category','create_category'])) { %>
     $("form#mainform").submit(() => {
       if (mainForm.valid()) {
         $('#submitBtn').attr('disabled', true);
@@ -123,7 +124,7 @@
       }
       return false;
     });
-
+    <% } %>
   });
 </script>
 

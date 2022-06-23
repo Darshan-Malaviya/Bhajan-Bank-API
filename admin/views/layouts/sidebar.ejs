@@ -78,6 +78,7 @@
                 <p>Dashboard</p>
               </a>
             </li>
+            <% if (new PermissionChecker(locals.user).isSuperUser()) { %>
             <li class="nav-item">
               <a href="#" class="nav-link">
                 <i class="nav-icon fas fa-table"></i>
@@ -101,6 +102,8 @@
                 </li>
               </ul>
             </li>
+            <% } %>
+            <% if (new PermissionChecker(locals.user).hasAnyPermission(['list_permissions','create_permission'])) { %>
             <li class="nav-item">
               <a href="#" class="nav-link">
                 <i class="nav-icon fas fa-lock"></i>
@@ -111,44 +114,55 @@
                 </p>
               </a>
               <ul class="nav nav-treeview" style="display: none;">
+                <% if (new PermissionChecker(locals.user).hasPermission('create_permission')) { %>
                 <li class="nav-item">
                   <a href="/admin/permission/create" class="nav-link">
                     <i class="fas fa-plus nav-icon"></i>
                     <p>create</p>
                   </a>
                 </li>
+                <% } %>
+                <% if (new PermissionChecker(locals.user).hasPermission('list_permission')) { %>
                 <li class="nav-item">
                   <a href="/admin/permission" class="nav-link">
                     <i class="fas fa-list nav-icon"></i>
                     <p>All</p>
                   </a>
                 </li>
+                <% } %>
               </ul>
             </li>
+            <% } %>
+            <% if (new PermissionChecker(locals.user).hasAnyPermission(['list_admins','create_admin'])) { %>
             <li class="nav-item">
               <a href="#" class="nav-link">
                 <i class="nav-icon fas fa-user"></i>
-
                 <p>
                   Admin
                   <i class="right fas fa-angle-left"></i>
                 </p>
               </a>
               <ul class="nav nav-treeview" style="display: none;">
+                <% if (new PermissionChecker(locals.user).hasPermission('create_admin')) { %>
                 <li class="nav-item">
                   <a href="/admin/admin/create" class="nav-link">
                     <i class="fas fa-plus nav-icon"></i>
                     <p>create</p>
                   </a>
                 </li>
+                <% } %>
+                <% if (new PermissionChecker(locals.user).hasPermission('list_admins')) { %>
                 <li class="nav-item">
                   <a href="/admin/admin" class="nav-link">
                     <i class="fas fa-list nav-icon"></i>
                     <p>All</p>
                   </a>
                 </li>
+                <% } %>
               </ul>
             </li>
+            <% } %>
+            <% if (new PermissionChecker(locals.user).hasAnyPermission(['list_medias','create_media'])) { %>
             <li class="nav-item">
               <a href="#" class="nav-link">
                 <i class="nav-icon fas fa-image"></i>
@@ -158,20 +172,26 @@
                 </p>
               </a>
               <ul class="nav nav-treeview" style="display: none;">
+                <% if (new PermissionChecker(locals.user).hasPermission('create_media')) { %>
                 <li class="nav-item">
                   <a href="/admin/media/create" class="nav-link">
                     <i class="fas fa-plus nav-icon"></i>
                     <p>create</p>
                   </a>
                 </li>
+                <% } %>
+                <% if (new PermissionChecker(locals.user).hasPermission('list_medias')) { %>
                 <li class="nav-item">
                   <a href="/admin/media" class="nav-link">
                     <i class="fas fa-list nav-icon"></i>
                     <p>All</p>
                   </a>
                 </li>
+                <% } %>
               </ul>
             </li>
+            <% } %>
+            <% if (new PermissionChecker(locals.user).hasAnyPermission(['list_categorys','create_category'])) { %>
             <li class="nav-item">
               <a href="#" class="nav-link">
                 <i class="nav-icon fas fa-circle"></i>
@@ -181,20 +201,26 @@
                 </p>
               </a>
               <ul class="nav nav-treeview" style="display: none;">
+                <% if (new PermissionChecker(locals.user).hasPermission('create_category')) { %>
                 <li class="nav-item">
                   <a href="/admin/category/create" class="nav-link">
                     <i class="fas fa-plus nav-icon"></i>
                     <p>create</p>
                   </a>
                 </li>
+                <% } %>
+                <% if (new PermissionChecker(locals.user).hasPermission('list_categorys')) { %>
                 <li class="nav-item">
                   <a href="/admin/category" class="nav-link">
                     <i class="fas fa-list nav-icon"></i>
                     <p>All</p>
                   </a>
                 </li>
+                <% } %>
               </ul>
             </li>
+            <% } %>
+            <% if (new PermissionChecker(locals.user).hasAnyPermission(['list_niyams','create_niyam'])) { %>
             <li class="nav-item">
               <a href="#" class="nav-link">
                 <i class="nav-icon fas fa-circle"></i>
@@ -204,20 +230,25 @@
                 </p>
               </a>
               <ul class="nav nav-treeview" style="display: none;">
+                <% if (new PermissionChecker(locals.user).hasPermission('create_niyam')) { %>
                 <li class="nav-item">
                   <a href="/admin/niyam/create" class="nav-link">
                     <i class="fas fa-plus nav-icon"></i>
                     <p>create</p>
                   </a>
                 </li>
+                <% } %>
+                <% if (new PermissionChecker(locals.user).hasPermission('list_niyams')) { %>
                 <li class="nav-item">
                   <a href="/admin/niyam" class="nav-link">
                     <i class="fas fa-list nav-icon"></i>
                     <p>All</p>
                   </a>
                 </li>
+                <% } %>
               </ul>
             </li>
+            <% } %>
           </ul>
         </nav>
         <!-- /.sidebar-menu -->

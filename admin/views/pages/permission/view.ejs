@@ -112,6 +112,7 @@
       }
     });
 
+    <% if (new PermissionChecker(locals.user).hasAnyPermission(['edit_permission','create_permission'])) { %>
     $("form#mainform").submit(() => {
       if (mainForm.valid()) {
         $('#submitBtn').attr('disabled', true);
@@ -155,6 +156,7 @@
       }
       return false;
     });
+    <% } %>
 
   });
 </script>
