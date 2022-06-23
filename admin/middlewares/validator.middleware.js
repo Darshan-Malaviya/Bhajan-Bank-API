@@ -6,6 +6,7 @@ import {
 	loginJoiSchema,
 	mediaJoiSchema,
 	permissionJoiSchema,
+	resetPasswordJoiSchema,
 } from "../helpers/validation.js";
 import { messagePusher } from "./message.middleware.js";
 
@@ -92,6 +93,18 @@ export const permissionValidationMiddleware = (req, res, next) => {
 export const loginValidationMiddleware = (req, res, next) => {
 	const login = req.body;
 	const validateResult = loginJoiSchema.validate(login);
+	if (validateResult.error) {
+		return res.send({
+			status: false,
+			message: validateResult.error.message,
+		});
+	}
+	next();
+};
+
+export const resetPasswordValidationMiddleware = (req, res, next) => {
+	const resetPassword = req.body;
+	const validateResult = resetPasswordJoiSchema.validate(resetPassword);
 	if (validateResult.error) {
 		return res.send({
 			status: false,

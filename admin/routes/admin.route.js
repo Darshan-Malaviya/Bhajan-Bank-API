@@ -9,11 +9,13 @@ import {
 	adminUsersPermissionPostController,
 	adminStatusController,
 	adminSuperUserStatusController,
+	adminResetPasswordController,
 } from "../controllers/admin.controller.js";
 import {
 	adminUserValidationMiddleware,
 	idValidationMiddleware,
 	idValidationMiddlewareForApi,
+	resetPasswordValidationMiddleware,
 } from "../middlewares/validator.middleware.js";
 
 const router = express.Router();
@@ -55,8 +57,15 @@ router.post(
 
 router.post(
 	"/user-permissions/:id",
-	idValidationMiddleware,
+	idValidationMiddlewareForApi,
 	adminUsersPermissionPostController
+);
+
+router.post(
+	"/reset-password/:id",
+	idValidationMiddlewareForApi,
+	resetPasswordValidationMiddleware,
+	adminResetPasswordController
 );
 
 export default router;

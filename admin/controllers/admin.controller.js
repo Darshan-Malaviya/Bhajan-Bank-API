@@ -30,8 +30,15 @@ export const adminCreateGetController = async (req, res) => {
 
 export const adminCreatePostController = async (req, res) => {
 	const csrfValue = await redisGet(req.body.csrfToken);
+	const password = req.body.password;
+	if (password === "") {
+		return res.send({
+			status: false,
+			message: "Password is required",
+		});
+	}
 	if (csrfValue) {
-		const encryptedPassword = await encryptPassword(req.body.password);
+		const encryptedPassword = await encryptPassword(password);
 		Admin.create(
 			{
 				name: req.body.name,
@@ -258,6 +265,53 @@ export const adminUsersPermissionPostController = async (req, res) => {
 		return res.send({
 			status: false,
 			message: "Error : " + err,
+		});
+	}
+};
+
+export const adminResetPasswordController = async (req, res) => {
+	const id = req.params.id;
+	const { password, confirmPassword, csrfToken } = req.body;
+	const csrfValue = await redisGet(csrfToken);
+	if (csrfValue) {
+		if (password === confirmPassword) {
+			const encryptedPassword = await encryptPassword(password);
+			Admin.findByIdAndUpdate(
+				id,
+				{
+					password: encryptedPassword,
+				},
+				(err, doc) => {
+					if (err) {
+						if (err.name === "CastError") {
+							return res.send({
+								status: false,
+								message: "Invalid id",
+							});
+						} else {
+							return res.send({
+								status: false,
+								message: "Error : " + err,
+							});
+						}
+					} else {
+						return res.send({
+							status: true,
+							message: `${doc.name}'s password updated successfully`,
+						});
+					}
+				}
+			);
+		} else {
+			return res.send({
+				status: false,
+				message: "Passwords do not match",
+			});
+		}
+	} else {
+		return res.send({
+			status: false,
+			message: "form expired, please try again",
 		});
 	}
 };

@@ -80,3 +80,15 @@ export const loginJoiSchema = Joi.object(
 		stripUnknown: true,
 	}
 );
+
+export const resetPasswordJoiSchema = Joi.object(
+	{
+		password: Joi.string().min(8).max(30).required(),
+		confirmPassword: Joi.string().valid(Joi.ref("password")).required(),
+		csrfToken: Joi.string().length(32).required(),
+	},
+	{
+		abortEarly: false,
+		stripUnknown: true,
+	}
+);
