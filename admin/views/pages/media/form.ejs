@@ -1,0 +1,73 @@
+<%- include('../../layouts/head.ejs') %>
+<link rel="stylesheet" href="/admin/public/plugins/select2/css/select2.min.css">
+<link rel="stylesheet" href="/admin/public/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css">
+<style>
+</style>
+
+<%- include('../../layouts/sidebar.ejs') %>
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-6">
+      <div class="card card-primary">
+        <!-- <div class="card-header">
+          <h3 class="card-title">Quick Example</h3>
+        </div> -->
+        <form id="mainform" method="post" action="/admin/<%= table %>/<%= operation %>/<% if(locals.id){ %><%= id %><% } %>" enctype="multipart/form-data" novalidate>
+          <input type="hidden" name="csrfToken" value="<% if(locals.csrfToken){ %><%= csrfToken %><% } %>" class="form-control">
+
+          <% if(locals.id){ %><div class="form-group"><span style="font-weight: bold;"><%= id %></span></div><% } %>
+
+          <div class="card-body">
+            <div class="form-group">
+              <label for="name">Name</label>
+              <input type="text" class="form-control" name="name" id="name" placeholder="Enter name" value="<% if(locals.row){ %><%= row.name %><% } %>" <% if (operation == 'view') { %>disabled<% } %>>
+            </div>
+            <div class="form-group">
+              <label>Media Type</label>
+              <select class="form-control select2" name="type" style="width: 100%; height: 100px;">
+                <% mediaTypes.forEach(element => { %>
+                <option value="<%= element %>"><%= element %></option>
+                <% }) %>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Content Type</label>
+              <select class="form-control select2" name="contentType" style="width: 100%; height: 100px;">
+                <% contentTypes.forEach(element => { %>
+                <option value="<%= element._id %>"><%= element.name %></option>
+                <% }) %>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Media File</label>
+              <div class="custom-file">
+                <input type="file" class="custom-file-input" name="mediaFile" id="mediaFile">
+                <label class="custom-file-label" for="mediaFile">Choose file</label>
+              </div>
+            </div>
+          </div>
+          <div class="card-footer">
+            <button type="submit" class="btn btn-success float-right">Submit</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<%- include('../../layouts/footer.ejs') %>
+<script src="/admin/public/plugins/select2/js/select2.full.min.js"></script>
+<script src="/admin/public/plugins/bs-custom-file-input/bs-custom-file-input.min.js"></script>
+<script>
+  $().ready(function() {
+
+    $('.select2').select2();
+
+    bsCustomFileInput.init();
+
+  });
+</script>
+</body>
+
+</html>

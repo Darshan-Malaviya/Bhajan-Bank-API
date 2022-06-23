@@ -9,6 +9,10 @@ import apiRouter from "./routes/index.js";
 import adminRouter from "./admin/routes/index.js";
 import { Admin, Permission } from "./admin/models/index.js";
 import { getBreadcrumbs } from "./admin/middlewares/breadcrumbs.middleware.js";
+import {
+	getUsersPermissions,
+	getUserPermissionsByContentTypeGroup,
+} from "./admin/services/admin.service.js";
 
 const PORT = process.env.port || 8000;
 
@@ -54,39 +58,10 @@ app.use("/admin", getBreadcrumbs, adminRouter);
 // api routes
 app.use("/api", apiRouter);
 
-app.get("/", (req, res) => {
-
-	Permission.aggregate([
-		{ $match: { isActive: true } },
-		{ $lookup: { from: "contenttypes", localField: "contentType", foreignField: "_id", as: "contentType" } },
-		{
-			$group: {
-				_id: "$contentType.identifier",
-				permissions: {
-					$push: "$name",
-				},
-			}
-		},
-		{
-			$set: {
-				contentType: {
-					$arrayElemAt: ["$_id", 0],
-				}
-			},
-		},
-		{
-			$project: {
-				_id: 0,
-				contentType: 1,
-				permissions: 1,
-			}
-		},
-	])
-		.then(permissions => {
-			res.send(permissions);
-		}).catch(err => {
-			res.send(err);
-		});
+app.get("/", async (req, res) => {
+	res.send({
+		status: true,
+	});
 });
 
 // Start the server

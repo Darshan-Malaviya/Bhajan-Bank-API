@@ -12,9 +12,9 @@
           <table id="zero_config" class="table table-bordered table-striped">
             <thead>
               <tr>
-                <th>Sorting</th>
                 <th>Name</th>
-                <th>is Active</th>
+                <th>Identifier</th>
+                <th>Active</th>
                 <th class="text-right">Actions</th>
               </tr>
             </thead>
@@ -22,11 +22,11 @@
               <%for(var i=0; i < rows.length; i++) { %>
               <% var row=rows[i] %>
               <tr id="row<%= row._id %>">
-                <td>
-                  <%= row.displayPosition %>
-                </td>
                 <td data-toggle="tooltip" title="<%= row._id %>">
                   <%= row.name %>
+                </td>
+                <td>
+                  <%= row.identifier %>
                 </td>
                 <td>
                   <div class="custom-control custom-switch">
@@ -39,7 +39,7 @@
                     <a href="/admin/<%= table %>/update/<%= row._id %>" class="btn a-btn-slide-text btn-outline-warning btn-sm">
                       <i class="fas fa-edit"></i>
                     </a>
-                    <button data-href="/admin/<%= table %>/delete/<%= row._id %>" data-id="<%= row._id %>" class="btn a-btn-slide-text btn-outline-danger btn-sm btn-delete">
+                    <button data-id="<%= row._id %>" class="btn a-btn-slide-text btn-outline-danger btn-sm btn-delete">
                       <i class="fas fa-trash"></i>
                     </button>
                   </div>
@@ -57,6 +57,8 @@
 <%- include('../../layouts/footer.ejs') %>
 <script>
   $(document).ready(function() {
+
+    var table = '<%= table %>';
 
     $("input[type=checkbox]").on('change', function() {
       var $this = $(this);
@@ -88,7 +90,7 @@
           $this.prop('checked', !isActive);
           Toast.fire({
             icon: 'error',
-            title: data
+            title: data.status + ' ' + data.statusText
           });
         }
       });
@@ -98,7 +100,7 @@
     $('.btn-delete').on('click', function() {
       var $this = $(this);
       var id = $this.attr('data-id');
-      var url = $this.attr('data-href');
+      var url = '/admin/' + table + '/delete/' + id;
 
       swal({
           title: 'Are you sure?',
@@ -130,7 +132,7 @@
                 console.log(data);
                 Toast.fire({
                   icon: 'error',
-                  title: 'Something went wrong'
+                  title: data.status + ' ' + data.statusText
                 });
               }
             });

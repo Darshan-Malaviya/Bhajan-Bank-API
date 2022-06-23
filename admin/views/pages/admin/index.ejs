@@ -43,9 +43,6 @@
                 </td>
                 <td class="text-right">
                   <div class="call-chat">
-                    <a href="/admin/<%= table %>/view/<%= row._id %>" class="btn a-btn-slide-text btn-outline-info btn-sm">
-                      <i class="fas fa-eye-slash"></i>
-                    </a>
                     <a href="/admin/<%= table %>/update/<%= row._id %>" class="btn a-btn-slide-text btn-outline-warning btn-sm">
                       <i class="fas fa-edit"></i>
                     </a>
@@ -147,31 +144,44 @@
       var id = $this.attr('data-id');
       var url = $this.attr('data-href');
 
-      $.ajax({
-        url: url,
-        type: 'DELETE',
-        success: function(data) {
-          if (data.status) {
-            Toast.fire({
-              icon: 'success',
-              title: data.message
+      swal({
+          title: 'Are you sure?',
+          text: "Once deleted, you will not be able to redo this action It's best to deactivate the user first",
+          icon: 'warning',
+          buttons: true,
+          dangerMode: true,
+        })
+        .then((willDelete) => {
+          if (willDelete) {
+            $.ajax({
+              url: url,
+              type: 'DELETE',
+              success: function(data) {
+                if (data.status) {
+                  Toast.fire({
+                    icon: 'success',
+                    title: data.message
+                  });
+                  $('#row' + id).remove();
+                } else {
+                  Toast.fire({
+                    icon: 'error',
+                    title: data.message
+                  });
+                }
+              },
+              error: function(data) {
+                console.log(data);
+                Toast.fire({
+                  icon: 'error',
+                  title: 'Something went wrong'
+                });
+              }
             });
-            $('#row' + id).remove();
           } else {
-            Toast.fire({
-              icon: 'error',
-              title: data.message
-            });
+            swal('Your data is safe');
           }
-        },
-        error: function(data) {
-          console.log(data);
-          Toast.fire({
-            icon: 'error',
-            title: 'Something went wrong'
-          });
-        }
-      });
+        });
     });
 
     $('#zero_config').DataTable();

@@ -24,7 +24,7 @@
       <div class="container">
         <div class="row">
           <div class="col-12 col-sm-8 offset-sm-2 col-md-6 offset-md-3 col-lg-6 offset-lg-3 col-xl-4 offset-xl-4">
-            <div class="login-brand">
+            <div class="login-brand" style="margin-bottom: 20px;">
               <a href="/admin/">
                 <img src="/admin/public/img/kalakunj-logo-icon.jpg" alt="logo" width="100" class="shadow-light rounded-circle" /></a>
             </div>
@@ -35,9 +35,8 @@
               </div>
 
               <div class="card-body">
-                <form class="form-horizontal m-t-20" id="loginform" action="/admin/login/" method="POST">
+                <form class="form-horizontal m-t-20" id="loginform">
                   <input type="hidden" name="csrfToken" value="<%= csrfToken %>" />
-                  <input type="hidden" name="next" value="<%= next %>" />
 
                   <div id="div_id_email" class="form-group">
                     <label for="id_email" class="requiredField">
@@ -52,11 +51,9 @@
                       Password<span class="asteriskField">*</span>
                     </label>
                     <div class="">
-                      <input type="password" name="password" autocomplete="current-password" class="textinput textInput form-control" maxlength="20" required id="id_password" />
+                      <input type="password" name="password" autocomplete="current-password" class="textinput textInput form-control" maxlength="30" required id="id_password" />
                     </div>
                   </div>
-
-                  <div class="form-group" style="margin-bottom: 20%"></div>
 
                   <div class="form-group">
                     <button type="submit" id="submitbtn" class="btn btn-success btn-lg btn-block" tabindex="4">
@@ -66,7 +63,7 @@
                 </form>
               </div>
             </div>
-            <div class="simple-footer">Copyright &copy; Kalakunj Mandir</div>
+            <div class="simple-footer" style="margin-top: 20px;">Copyright &copy; Kalakunj Mandir</div>
           </div>
         </div>
       </div>
@@ -77,7 +74,7 @@
   <script src="/admin/public/plugins/jquery/jquery.min.js"></script>
   <script src="/admin/public/plugins/popper/popper.min.js"></script>
   <script src="/admin/public/plugins/bootstrap/js/bootstrap.min.js"></script>
-  <script src="/static/new-dashboard/dist/js/jquery-nicescroll.js"></script>
+  <!-- <script src="/static/new-dashboard/dist/js/jquery-nicescroll.js"></script> -->
   <script src="/admin/public/plugins/moment/moment.min.js"></script>
   <script src="/admin/public/plugins/sweetalert2/sweetalert2.min.js"></script>
   <script src="/admin/public/plugins/jquery-validation/jquery.validate.min.js"></script>
@@ -87,14 +84,19 @@
   <!-- Template JS File -->
   <script src="/admin/public/js/stisla-scripts.js"></script>
 
+
   <script>
+    // Toaster
+    var Toast = Swal.mixin({
+      toast: true,
+      position: 'top-end',
+      showConfirmButton: false,
+      timer: 3000
+    });
+
     $(document).ready(function() {
-      $.validator.setDefaults({
-        submitHandler: function() {
-          $('#loginform').submit();
-        },
-      });
-      $('#loginform').validate({
+
+      var loginForm = $('#loginform').validate({
         rules: {
           email: {
             required: true,
@@ -127,14 +129,52 @@
           $(element).removeClass("is-invalid");
         }
       });
-    });
 
-    // Toaster
-    var Toast = Swal.mixin({
-      toast: true,
-      position: 'top-end',
-      showConfirmButton: false,
-      timer: 3000
+      $('form#loginform').submit(function(e) {
+        e.preventDefault();
+
+        if (loginForm.valid()) {
+          $('#submitbtn').attr('disabled', true);
+          $('#submitbtn').addClass('btn-progress');
+
+          $.ajax({
+            url: '/admin/login/',
+            type: 'POST',
+            data: $('form#loginform').serialize(),
+            success: function(data) {
+              if (data.status) {
+                Toast.fire({
+                  icon: 'success',
+                  title: data.message + ' Redirecting...'
+                });
+                setTimeout(function() {
+                  window.location.href = '<%= next %>';
+                }, 1000);
+              } else {
+                Toast.fire({
+                  icon: 'error',
+                  title: data.message
+                });
+              }
+              $('#submitbtn').attr('disabled', false);
+              $('#submitbtn').removeClass('btn-progress');
+            },
+            error: function(data) {
+              Toast.fire({
+                icon: 'error',
+                title: data.status + ' ' + data.statusText
+              });
+              $('#submitbtn').attr('disabled', false);
+              $('#submitbtn').removeClass('btn-progress');
+            }
+          });
+
+
+        } else {
+          loginForm.validate().focusInvalid();
+        }
+      });
+
     });
 
     var messages = [

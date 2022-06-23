@@ -28,3 +28,55 @@ export const adminUserJoiSchema = Joi.object(
 		stripUnknown: true,
 	}
 );
+
+export const mediaJoiSchema = Joi.object(
+	{
+		name: Joi.string().min(3).max(30).required(),
+		type: Joi.string().min(3).max(30).required(),
+		contentType: Joi.string().min(3).max(30).required(),
+		csrfToken: Joi.string().length(32).required(),
+	},
+	{
+		abortEarly: false,
+		stripUnknown: true,
+	}
+);
+
+export const contentTypeJoiSchema = Joi.object(
+	{
+		name: Joi.string().min(3).max(30).required(),
+		identifier: Joi.string().min(3).max(30).required(),
+		description: Joi.string().min(3).max(30).required(),
+		csrfToken: Joi.string().length(32).required(),
+	},
+	{
+		abortEarly: false,
+		stripUnknown: true,
+	}
+);
+
+export const permissionJoiSchema = Joi.object(
+	{
+		name: Joi.string().min(3).max(30).required(),
+		identifier: Joi.string().min(3).max(30).required(),
+		description: Joi.string().required(),
+		contentType: Joi.string().min(3).max(30).required(),
+		csrfToken: Joi.string().length(32).required(),
+	},
+	{
+		abortEarly: false,
+		stripUnknown: true,
+	}
+);
+
+export const loginJoiSchema = Joi.object(
+	{
+		email: Joi.string().email().required(),
+		password: Joi.string().min(8).max(30).required(),
+		csrfToken: Joi.string().length(32).required(),
+	},
+	{
+		abortEarly: false,
+		stripUnknown: true,
+	}
+);

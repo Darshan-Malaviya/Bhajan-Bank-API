@@ -21,8 +21,27 @@
               <input type="text" class="form-control" name="name" id="name" placeholder="Enter name" value="<% if(locals.row){ %><%= row.name %><% } %>">
             </div>
             <div class="form-group">
-              <label for="displayPosition">Display Position</label>
-              <input type="number" class="form-control" name="displayPosition" id="displayPosition" placeholder="Enter number for Sorting Position" value="<% if(locals.row){ %><%= row.displayPosition %><% } %>">
+              <label for="identifier">Identifier</label>
+              <input type="text" class="form-control" name="identifier" id="identifier" placeholder="Enter name" value="<% if(locals.row){ %><%= row.identifier %><% } %>">
+            </div>
+            <div class="form-group">
+              <label>Content Type</label>
+              <select class="form-control select2" name="contentType">
+                <% if (operation == 'update') { %>
+                <% contentTypes.forEach(element => { %>
+                <option value="<%= element._id %>" <% if (element.identifier == row.contentType.identifier) { %>selected<% } %>><%= element.name %></option>
+                <% }) %>
+                <% } else { %>
+                <option value="" disabled selected>Select Content Type</option>
+                <% contentTypes.forEach(element => { %>
+                <option value="<%= element._id %>"><%= element.name %></option>
+                <% }) %>
+                <% } %>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="description">Description</label>
+              <input type="text" class="form-control" name="description" id="description" placeholder="Enter Description" value="<% if(locals.row){ %><%= row.description %><% } %>">
             </div>
           </div>
           <div class="card-footer">
@@ -50,21 +69,34 @@
           minlength: 3,
           maxlength: 30
         },
-        displayPosition: {
+        identifier: {
           required: true,
-          number: true,
-          min: 1,
-          max: 99
+          minlength: 3,
+          maxlength: 30
+        },
+        description: {
+          required: true
+        },
+        contentType: {
+          required: true
         }
       },
       messages: {
         name: {
           required: "Please enter a name",
-          minlength: "Name must consist of at least 3 characters"
+          minlength: "Name must consist of at least 3 characters",
+          maxlength: "Name must consist of at most 30 characters"
         },
-        displayPosition: {
-          required: "Please enter a sorting position",
-          number: "Display position must be a number"
+        identifier: {
+          required: "Please enter a identifier",
+          minlength: "Identifier must consist of at least 3 characters",
+          maxlength: "Identifier must consist of at most 30 characters"
+        },
+        description: {
+          required: "Please enter a description"
+        },
+        contentType: {
+          required: "Please select a content type"
         }
       },
       errorElement: 'span',

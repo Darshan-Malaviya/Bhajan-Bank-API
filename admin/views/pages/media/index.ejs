@@ -12,9 +12,9 @@
           <table id="zero_config" class="table table-bordered table-striped">
             <thead>
               <tr>
-                <th>Sorting</th>
                 <th>Name</th>
-                <th>is Active</th>
+                <th>type</th>
+                <th>ContentType</th>
                 <th class="text-right">Actions</th>
               </tr>
             </thead>
@@ -22,11 +22,14 @@
               <%for(var i=0; i < rows.length; i++) { %>
               <% var row=rows[i] %>
               <tr id="row<%= row._id %>">
-                <td>
-                  <%= row.displayPosition %>
-                </td>
                 <td data-toggle="tooltip" title="<%= row._id %>">
                   <%= row.name %>
+                </td>
+                <td>
+                  <%= row.type %>
+                </td>
+                <td>
+                  <%= row.contentType.identifier %>
                 </td>
                 <td>
                   <div class="custom-control custom-switch">
@@ -36,9 +39,9 @@
                 </td>
                 <td class="text-right">
                   <div class="call-chat">
-                    <a href="/admin/<%= table %>/update/<%= row._id %>" class="btn a-btn-slide-text btn-outline-warning btn-sm">
-                      <i class="fas fa-edit"></i>
-                    </a>
+                    <button data-href="<%= row.url %>" data-contentType="<%= row.contentType.identifier %>" data-type="<%= row.type %>" data-name="<%= row.name %>" data-id="<%= row._id %>" class="btn btn-outline-info a-btn-slide-text btn-sm modal-view-btn">
+                      <i class="fas fa-eye-slash" aria-hidden="true"></i>
+                    </button>
                     <button data-href="/admin/<%= table %>/delete/<%= row._id %>" data-id="<%= row._id %>" class="btn a-btn-slide-text btn-outline-danger btn-sm btn-delete">
                       <i class="fas fa-trash"></i>
                     </button>
@@ -52,6 +55,24 @@
       </div>
     </div>
   </div>
+</div>
+
+<div class="modal fade" id="modal-default">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Default Modal</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>One fine body&hellip;</p>
+      </div>
+    </div>
+    <!-- /.modal-content -->
+  </div>
+  <!-- /.modal-dialog -->
 </div>
 
 <%- include('../../layouts/footer.ejs') %>
@@ -86,9 +107,10 @@
         },
         error: function(data) {
           $this.prop('checked', !isActive);
+          console.log(data);
           Toast.fire({
             icon: 'error',
-            title: data
+            title: data.status + ' ' + data.statusText
           });
         }
       });
@@ -127,10 +149,9 @@
                 }
               },
               error: function(data) {
-                console.log(data);
                 Toast.fire({
                   icon: 'error',
-                  title: 'Something went wrong'
+                  title: data.status + ' ' + data.statusText
                 });
               }
             });
@@ -138,6 +159,22 @@
             swal('Your data is safe');
           }
         });
+    });
+
+    $('.modal-view-btn').on('click', function() {
+      var $this = $(this);
+      var url = $this.attr('data-href');
+      var contentType = $this.attr('data-contentType');
+      var type = $this.attr('data-type');
+      var name = $this.attr('data-name');
+      var id = $this.attr('data-id');
+      var modal = $('#modal-default');
+      var modalTitle = $('#modal-default .modal-title');
+      var modalBody = $('#modal-default .modal-body');
+      var modalFooter = $('#modal-default .modal-footer');
+      modalTitle.html(name);
+      modal.find('.modal-body').html('<span class="text-center"> Url : ' + url + '</span></br></br><span class="text-center"> Content Type : ' + contentType + '</span></br></br><span class="text-center"> Type : ' + type + '</span>');
+      modal.modal('show');
     });
 
     $('#zero_config').DataTable();

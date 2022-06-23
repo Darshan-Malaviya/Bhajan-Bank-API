@@ -1,27 +1,54 @@
-import express from 'express';
+import express from "express";
 import {
-    permissionCreateGetController,
-    permissionCreatePostController,
-    permissionDeleteController,
-    permissionsController,
-    permissionUpdateGetController,
-    permissionUpdatePostController,
-    permissionViewController,
-} from '../controllers/permission.controller.js';
-import { idValidationMiddleware } from '../middlewares/idValidator.middleware.js';
+	permissionCreateGetController,
+	permissionCreatePostController,
+	permissionDeleteController,
+	permissionsController,
+	permissionStatusController,
+	permissionUpdateGetController,
+	permissionUpdatePostController,
+} from "../controllers/permission.controller.js";
+import {
+	idValidationMiddleware,
+	idValidationMiddlewareForApi,
+	permissionValidationMiddleware,
+} from "../middlewares/validator.middleware.js";
 
 const router = express.Router();
 
+router.get("/", permissionsController);
 
-router.get('/', permissionsController);
-
-router.get("/delete/:id", idValidationMiddleware, permissionDeleteController);
+router.delete(
+	"/delete/:id",
+	idValidationMiddlewareForApi,
+	permissionDeleteController
+);
 
 router.get("/create", permissionCreateGetController);
-router.get("/view/:id", idValidationMiddleware, permissionViewController);
-router.get("/update/:id", idValidationMiddleware, permissionUpdateGetController);
 
-router.post("/create", permissionCreatePostController);
-router.post("/update/:id", idValidationMiddleware, permissionUpdatePostController);
+router.get(
+	"/update/:id",
+	idValidationMiddleware,
+	permissionUpdateGetController
+);
+
+router.post(
+	"/create",
+	permissionValidationMiddleware,
+	permissionCreatePostController
+);
+
+router.post(
+	"/update/:id",
+	idValidationMiddlewareForApi,
+	permissionValidationMiddleware,
+	permissionUpdatePostController
+);
+
+router.post(
+	"/update-status/:id",
+	idValidationMiddlewareForApi,
+	permissionStatusController
+);
 
 export default router;

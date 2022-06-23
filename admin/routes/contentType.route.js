@@ -1,27 +1,53 @@
-import express from 'express';
+import express from "express";
 import {
-    contentTypeCreateGetController,
-    contentTypeCreatePostController,
-    contentTypeDeleteController,
-    contentTypesController,
-    contentTypeUpdateGetController,
-    contentTypeUpdatePostController,
-    contentTypeViewController,
-} from '../controllers/contentType.controller.js';
-import { idValidationMiddleware } from '../middlewares/idValidator.middleware.js';
+	contentTypeCreateGetController,
+	contentTypeCreatePostController,
+	contentTypeDeleteController,
+	contentTypesController,
+	contentTypeStatusController,
+	contentTypeUpdateGetController,
+	contentTypeUpdatePostController,
+} from "../controllers/contentType.controller.js";
+import {
+	contentTypeValidationMiddleware,
+	idValidationMiddleware,
+	idValidationMiddlewareForApi,
+} from "../middlewares/validator.middleware.js";
 
 const router = express.Router();
 
+router.get("/", contentTypesController);
 
-router.get('/', contentTypesController);
-
-router.get("/delete/:id", idValidationMiddleware, contentTypeDeleteController);
+router.delete(
+	"/delete/:id",
+	idValidationMiddlewareForApi,
+	contentTypeDeleteController
+);
 
 router.get("/create", contentTypeCreateGetController);
-router.get("/view/:id", idValidationMiddleware, contentTypeViewController);
-router.get("/update/:id", idValidationMiddleware, contentTypeUpdateGetController);
 
-router.post("/create", contentTypeCreatePostController);
-router.post("/update/:id", idValidationMiddleware, contentTypeUpdatePostController);
+router.get(
+	"/update/:id",
+	idValidationMiddleware,
+	contentTypeUpdateGetController
+);
+
+router.post(
+	"/create",
+	contentTypeValidationMiddleware,
+	contentTypeCreatePostController
+);
+router.post(
+	"/update/:id",
+	idValidationMiddlewareForApi,
+	contentTypeValidationMiddleware,
+	contentTypeUpdatePostController
+);
+
+router.post(
+	"/update-status/:id",
+	idValidationMiddlewareForApi,
+	contentTypeStatusController
+);
 
 export default router;

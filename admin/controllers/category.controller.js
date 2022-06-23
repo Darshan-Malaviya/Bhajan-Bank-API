@@ -25,20 +25,6 @@ export const categorysController = async (req, res) => {
 	});
 };
 
-export const categoryViewController = async (req, res) => {
-	const id = req.params.id;
-	var row = await Category.findById(id).lean();
-	const resParams = {
-		pagePath: "Category / View",
-		title: "Category View",
-		operation: "view",
-		row: row,
-		id: id,
-		table: "category",
-	};
-	res.render("pages/category/view", resParams);
-};
-
 export const categoryCreateGetController = async (req, res) => {
 	const csrfToken = randomStringFromCrypto(16);
 	redisSet(csrfToken, "csrfToken", 60 * 5); // 5 minutes
@@ -71,6 +57,7 @@ export const categoryCreatePostController = async (req, res) => {
 				} else {
 					return res.send({
 						status: true,
+						id: doc._id,
 						message: `${doc.name} created successfully`,
 					});
 				}
@@ -141,25 +128,22 @@ export const categoryUpdatePostController = async (req, res, next) => {
 	}
 };
 
-// export const categoryDeleteController = (req, res) => {
-//     const id = req.params.id;
-//     Category.findByIdAndDelete(id, (err, row) => {
-//         if (err) {
-//             messagePusher(req, "danger", "Category not deleted");
-//         } else {
-//             if (row) {
-//                 messagePusher(
-//                     req,
-//                     "success",
-//                     row.name + " Category deleted successfully"
-//                 );
-//             } else {
-//                 messagePusher(req, "danger", "Category not found");
-//             }
-//         }
-//         res.redirect("/admin/category");
-//     });
-// };
+export const categoryDeleteController = (req, res) => {
+	const id = req.params.id;
+	Category.findByIdAndDelete(id, (err, row) => {
+		if (err) {
+			return res.send({
+				status: false,
+				message: "Category not deleted Error : " + err,
+			});
+		} else {
+			return res.send({
+				status: true,
+				message: `${row.name} deleted successfully`,
+			});
+		}
+	});
+};
 
 export const categoryStatusController = async (req, res) => {
 	const id = req.params.id;

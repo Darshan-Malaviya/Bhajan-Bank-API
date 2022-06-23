@@ -15,6 +15,26 @@
           <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
         </li>
       </ul>
+      <ul class="navbar-nav ml-auto">
+        <li class="nav-item dropdown">
+          <a class="nav-link" data-toggle="dropdown" href="#">
+            <i class="far fa-user"></i>
+          </a>
+          <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+            <span class="dropdown-item dropdown-header"><%= locals.user.name %></span>
+            <div class="dropdown-divider"></div>
+            <a href="/admin/logout" class="dropdown-item">
+              <i class="fa fa-sign-out"></i> Logout
+            </a>
+            <div class="dropdown-divider"></div>
+          </div>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" data-widget="fullscreen" href="#" role="button">
+            <i class="fas fa-expand-arrows-alt"></i>
+          </a>
+        </li>
+      </ul>
     </nav>
 
     <!-- Left side column. contains the logo and sidebar -->
@@ -34,7 +54,7 @@
             <img src="/admin/public/img/user2-160x160.jpg" class="img-circle elevation-2" alt="User Image">
           </div>
           <div class="info">
-            <a href="#" class="d-block">Alexander Pierce</a>
+            <a href="#" class="d-block"><%= locals.user.name %></a>
           </div>
         </div>
 
@@ -57,6 +77,100 @@
                 <i class="nav-icon fas fa-tachometer-alt"></i>
                 <p>Dashboard</p>
               </a>
+            </li>
+            <li class="nav-item">
+              <a href="#" class="nav-link">
+                <i class="nav-icon fas fa-table"></i>
+                <p>
+                  ContentType
+                  <i class="right fas fa-angle-left"></i>
+                </p>
+              </a>
+              <ul class="nav nav-treeview" style="display: none;">
+                <li class="nav-item">
+                  <a href="/admin/contentType/create" class="nav-link">
+                    <i class="fas fa-plus nav-icon"></i>
+                    <p>create</p>
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a href="/admin/contentType" class="nav-link">
+                    <i class="fas fa-list nav-icon"></i>
+                    <p>All</p>
+                  </a>
+                </li>
+              </ul>
+            </li>
+            <li class="nav-item">
+              <a href="#" class="nav-link">
+                <i class="nav-icon fas fa-lock"></i>
+
+                <p>
+                  Permission
+                  <i class="right fas fa-angle-left"></i>
+                </p>
+              </a>
+              <ul class="nav nav-treeview" style="display: none;">
+                <li class="nav-item">
+                  <a href="/admin/permission/create" class="nav-link">
+                    <i class="fas fa-plus nav-icon"></i>
+                    <p>create</p>
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a href="/admin/permission" class="nav-link">
+                    <i class="fas fa-list nav-icon"></i>
+                    <p>All</p>
+                  </a>
+                </li>
+              </ul>
+            </li>
+            <li class="nav-item">
+              <a href="#" class="nav-link">
+                <i class="nav-icon fas fa-user"></i>
+
+                <p>
+                  Admin
+                  <i class="right fas fa-angle-left"></i>
+                </p>
+              </a>
+              <ul class="nav nav-treeview" style="display: none;">
+                <li class="nav-item">
+                  <a href="/admin/admin/create" class="nav-link">
+                    <i class="fas fa-plus nav-icon"></i>
+                    <p>create</p>
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a href="/admin/admin" class="nav-link">
+                    <i class="fas fa-list nav-icon"></i>
+                    <p>All</p>
+                  </a>
+                </li>
+              </ul>
+            </li>
+            <li class="nav-item">
+              <a href="#" class="nav-link">
+                <i class="nav-icon fas fa-image"></i>
+                <p>
+                  Media
+                  <i class="right fas fa-angle-left"></i>
+                </p>
+              </a>
+              <ul class="nav nav-treeview" style="display: none;">
+                <li class="nav-item">
+                  <a href="/admin/media/create" class="nav-link">
+                    <i class="fas fa-plus nav-icon"></i>
+                    <p>create</p>
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a href="/admin/media" class="nav-link">
+                    <i class="fas fa-list nav-icon"></i>
+                    <p>All</p>
+                  </a>
+                </li>
+              </ul>
             </li>
             <li class="nav-item">
               <a href="#" class="nav-link">
@@ -98,30 +212,6 @@
                 </li>
                 <li class="nav-item">
                   <a href="/admin/niyam" class="nav-link">
-                    <i class="fas fa-list nav-icon"></i>
-                    <p>All</p>
-                  </a>
-                </li>
-              </ul>
-            </li>
-            <li class="nav-item">
-              <a href="#" class="nav-link">
-                <i class="nav-icon fas fa-user"></i>
-
-                <p>
-                  Admin
-                  <i class="right fas fa-angle-left"></i>
-                </p>
-              </a>
-              <ul class="nav nav-treeview" style="display: none;">
-                <li class="nav-item">
-                  <a href="/admin/admin/create" class="nav-link">
-                    <i class="fas fa-plus nav-icon"></i>
-                    <p>create</p>
-                  </a>
-                </li>
-                <li class="nav-item">
-                  <a href="/admin/admin" class="nav-link">
                     <i class="fas fa-list nav-icon"></i>
                     <p>All</p>
                   </a>

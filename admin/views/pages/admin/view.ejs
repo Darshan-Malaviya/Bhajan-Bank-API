@@ -5,26 +5,25 @@
 <%- include('../../layouts/sidebar.ejs') %>
 <div class="container-fluid">
   <div class="row">
+
     <div class="col-md-6">
       <div class="card card-primary">
         <!-- <div class="card-header">
           <h3 class="card-title">Quick Example</h3>
         </div> -->
-        <% if (operation != 'view') { %>
         <form id="mainform">
           <input type="hidden" name="csrfToken" value="<% if(locals.csrfToken){ %><%= csrfToken %><% } %>" class="form-control">
-          <% } %>
 
           <% if(locals.id){ %><div class="form-group"><span style="font-weight: bold;"><%= id %></span></div><% } %>
 
           <div class="card-body">
             <div class="form-group">
               <label for="name">Name</label>
-              <input type="text" class="form-control" name="name" id="name" placeholder="Enter name" value="<% if(locals.row){ %><%= row.name %><% } %>" <% if (operation == 'view') { %>disabled<% } %>>
+              <input type="text" class="form-control" name="name" id="name" placeholder="Enter name" value="<% if(locals.row){ %><%= row.name %><% } %>">
             </div>
             <div class="form-group">
               <label for="email">Email</label>
-              <input type="text" class="form-control" name="email" id="email" placeholder="Enter email" value="<% if(locals.row){ %><%= row.email %><% } %>" <% if (operation == 'view') { %>disabled<% } %>>
+              <input type="text" class="form-control" name="email" id="email" placeholder="Enter email" value="<% if(locals.row){ %><%= row.email %><% } %>">
             </div>
             <% if (operation == 'create') { %>
             <div class="form-group">
@@ -33,14 +32,52 @@
             </div>
             <% } %>
           </div>
-          <% if (operation != 'view') { %>
           <div class="card-footer">
-            <button type="submit" class="btn btn-success float-right">Submit</button>
+            <button type="submit" id="submitBtn" class="btn btn-success float-right">Submit</button>
           </div>
         </form>
-        <% } %>
       </div>
     </div>
+
+    <% if(operation == 'update') { %>
+    <div class="col-md-12">
+      <div class="card card-primary">
+
+        <div class="card-header">
+          <h3 class="card-title">Permissions</h3>
+        </div>
+
+        <div class="card-body permissions">
+          <div class="row">
+            <% for( var i = 0; i < permissions.length; i++ ) {
+              var contentType = permissions[i].contentType;
+              var tablePermissions = permissions[i].permissions;
+              %>
+            <div class="col-sm-3">
+              <div class="form-group">
+                <label><%= contentType %></label>
+                <% for( var j = 0; j < tablePermissions.length; j++ ) {
+                var permission = tablePermissions[j];
+                %>
+                <div class="custom-control custom-checkbox">
+                  <input class="custom-control-input" type="checkbox" id="<%= permission.id %>" <% if(permission.granted){ %> checked <% } %> name="permissionCheckbox">
+                  <label for="<%= permission.id %>" class="custom-control-label"><%= permission.name %></label>
+                </div>
+                <% } %>
+              </div>
+            </div>
+            <% } %>
+          </div>
+        </div>
+
+        <div class="card-footer">
+          <button type="submit" id="permissionBtn" class="btn btn-success float-right">Submit</button>
+        </div>
+
+      </div>
+    </div>
+    <% } %>
+
   </div>
 </div>
 
@@ -49,6 +86,9 @@
 <script>
   $().ready(function() {
 
+    var table = '<%= table %>';
+    var id = '<% if(locals.id){ %><%= id %><% } %>';
+    var operation = '<%= operation %>';
 
     var mainForm = $('#mainform').validate({
       rules: {
@@ -98,6 +138,8 @@
 
     $("form#mainform").submit(() => {
       if (mainForm.valid()) {
+        $('#submitBtn').attr('disabled', true);
+        $('#submitBtn').addClass('btn-progress')
         $.ajax({
           url: "/admin/<%= table %>/<%= operation %>/<% if(locals.id){ %><%= id %><% } %>",
           type: "POST",
@@ -108,18 +150,28 @@
                 icon: 'success',
                 title: data.message
               });
+              if (operation == 'create') {
+                setTimeout(() => {
+                  location.replace("/admin/" + table + "/update/" + data.id);
+                }, 2000);
+              }
             } else {
               Toast.fire({
                 icon: 'error',
                 title: data.message
               });
             }
+            $('#submitBtn').attr('disabled', false);
+            $('#submitBtn').removeClass('btn-progress')
           },
           error: function(data) {
+            console.log(data);
             Toast.fire({
               icon: 'error',
-              title: data
+              title: data.status + ' ' + data.statusText
             });
+            $('#submitBtn').attr('disabled', false);
+            $('#submitBtn').removeClass('btn-progress')
           }
         });
 
@@ -128,6 +180,62 @@
       }
       return false;
     });
+
+    $("#permissionBtn").click(() => {
+      $('#permissionBtn').attr('disabled', true);
+      $('#permissionBtn').addClass('btn-progress');
+
+
+      if (id == '') {
+        Toast.fire({
+          icon: 'error',
+          title: 'Please save the user first'
+        });
+        return false;
+      }
+      var permCheckboxs = $('input[name="permissionCheckbox"]');
+      var permissions = [];
+      for (var i = 0; i < permCheckboxs.length; i++) {
+        var permCheckbox = permCheckboxs[i];
+        if (permCheckbox.checked) {
+          permissions.push(permCheckbox.id);
+        }
+      }
+      console.log(permissions);
+
+      $.ajax({
+        url: "/admin/admin/user-permissions/" + id,
+        type: "POST",
+        data: {
+          permissions: permissions
+        },
+        success: function(data) {
+          if (data.status) {
+            Toast.fire({
+              icon: 'success',
+              title: data.message
+            });
+          } else {
+            Toast.fire({
+              icon: 'error',
+              title: data.message
+            });
+          }
+          $('#permissionBtn').attr('disabled', false);
+          $('#permissionBtn').removeClass('btn-progress');
+        },
+        error: function(data) {
+          Toast.fire({
+            icon: 'error',
+            title: data.status + ' ' + data.statusText
+          });
+          $('#permissionBtn').attr('disabled', false);
+          $('#permissionBtn').removeClass('btn-progress');
+        }
+      });
+
+    });
+
   });
 </script>
 

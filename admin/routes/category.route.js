@@ -2,12 +2,11 @@ import express from "express";
 import {
 	categoryCreateGetController,
 	categoryCreatePostController,
-	// categoryDeleteController,
+	categoryDeleteController,
 	categorysController,
 	categoryStatusController,
 	categoryUpdateGetController,
 	categoryUpdatePostController,
-	categoryViewController,
 } from "../controllers/category.controller.js";
 import {
 	categoryValidationMiddleware,
@@ -19,10 +18,13 @@ const router = express.Router();
 
 router.get("/", categorysController);
 
-// router.get("/delete/:id", idValidationMiddleware, categoryDeleteController);
+router.delete(
+	"/delete/:id",
+	idValidationMiddlewareForApi,
+	categoryDeleteController
+);
 
 router.get("/create", categoryCreateGetController);
-router.get("/view/:id", idValidationMiddleware, categoryViewController);
 router.get("/update/:id", idValidationMiddleware, categoryUpdateGetController);
 
 router.post(

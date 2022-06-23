@@ -6,9 +6,7 @@ import {
 	adminsController,
 	adminUpdateGetController,
 	adminUpdatePostController,
-	adminUsersPermissionGetController,
 	adminUsersPermissionPostController,
-	adminViewController,
 	adminStatusController,
 	adminSuperUserStatusController,
 } from "../controllers/admin.controller.js";
@@ -29,7 +27,7 @@ router.delete(
 );
 
 router.get("/create", adminCreateGetController);
-router.get("/view/:id", idValidationMiddleware, adminViewController);
+
 router.get("/update/:id", idValidationMiddleware, adminUpdateGetController);
 
 router.post(
@@ -48,21 +46,17 @@ router.post(
 	idValidationMiddlewareForApi,
 	adminStatusController
 );
+
 router.post(
 	"/update-superuser/:id",
 	idValidationMiddlewareForApi,
 	adminSuperUserStatusController
 );
 
-// router.get(
-// 	"/usersPermission/:id",
-// 	idValidationMiddleware,
-// 	adminUsersPermissionGetController
-// );
-// router.post(
-// 	"/usersPermission/:id",
-// 	idValidationMiddleware,
-// 	adminUsersPermissionPostController
-// );
+router.post(
+	"/user-permissions/:id",
+	idValidationMiddleware,
+	adminUsersPermissionPostController
+);
 
 export default router;
