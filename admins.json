@@ -1,0 +1,64 @@
+[{
+  "_id": {
+    "$oid": "62b2a5a541752e14120b8088"
+  },
+  "name": "Darshan Malaviya",
+  "email": "darshanmalaviya163@gmail.com",
+  "password": "$2b$10$z.Ld4U.z4qcflEWqIwuto.Ae9DKUSsUN0SwHPHUOCYZ09DBZL127G",
+  "isActive": true,
+  "isSuperUser": true,
+  "permissions": [],
+  "createdAt": {
+    "$date": {
+      "$numberLong": "1655874981576"
+    }
+  },
+  "updatedAt": {
+    "$date": {
+      "$numberLong": "1655973158644"
+    }
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "62b2f07123ce0ba9311880c6"
+  },
+  "name": "Admin",
+  "email": "admin@gmail.com",
+  "password": "$2b$10$2nrmOdqk9bAyDra4HNiNM.U1kEA/W9HjJD1XDa118yd4mJWUVVcUa",
+  "isActive": true,
+  "isSuperUser": true,
+  "permissions": [],
+  "createdAt": {
+    "$date": {
+      "$numberLong": "1655894129622"
+    }
+  },
+  "updatedAt": {
+    "$date": {
+      "$numberLong": "1655985535003"
+    }
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "62b48dbeec9b2ced8bf4ebd5"
+  },
+  "name": "user 1",
+  "email": "user1@gmail.com",
+  "password": "$2b$10$EXP24KTNHWX0R.9ahFrlKeE/spxi87XTjHuDzxFsvLXO/3icMAozy",
+  "isActive": true,
+  "isSuperUser": false,
+  "permissions": [],
+  "createdAt": {
+    "$date": {
+      "$numberLong": "1655999934911"
+    }
+  },
+  "updatedAt": {
+    "$date": {
+      "$numberLong": "1656014575698"
+    }
+  },
+  "__v": 0
+}]
