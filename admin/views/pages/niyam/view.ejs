@@ -1,0 +1,314 @@
+<%- include('../../layouts/head.ejs') %>
+<style>
+
+</style>
+<%- include('../../layouts/sidebar.ejs') %>
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="card card-primary">
+        <!-- <div class="card-header">
+          <h3 class="card-title">Quick Example</h3>
+        </div> -->
+        <form id="mainform">
+          <input type="hidden" name="csrfToken" value="<% if(locals.csrfToken){ %><%= csrfToken %><% } %>" class="form-control">
+
+          <% if(locals.id){ %><div class="form-group"><span style="font-weight: bold;"><%= id %></span></div><% } %>
+
+          <div class="card-body">
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="name">Name</label>
+                  <input type="text" class="form-control" name="name" id="name" placeholder="Enter name" value="<% if(locals.row){ %><%= row.name %><% } %>">
+                </div>
+                <div class="form-group">
+                  <label>Category</label>
+                  <select class="form-control select2" name="category">
+                    <% if (operation == 'update') { %>
+                    <% categories.forEach(element => { %>
+                    <option value="<%= element._id %>" <% if (element._id == row.category._id) { %>selected<% } %>><%= element.name %></option>
+                    <% }) %>
+                    <% } else { %>
+                    <option value="" disabled selected>Select Content Type</option>
+                    <% categories.forEach(element => { %>
+                    <option value="<%= element._id %>"><%= element.name %></option>
+                    <% }) %>
+                    <% } %>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="description">Short Description</label>
+                  <textarea class="form-control" rows="3" name="shortDescription" id="shortDescription" placeholder="Enter Short Description"><% if(locals.row){ %><%= row.shortDescription %><% } %></textarea>
+                </div>
+                <div class="form-group">
+                  <label for="description">Description</label>
+                  <textarea class="form-control" rows="3" name="description" id="description" placeholder="Enter Description"><% if(locals.row){ %><%= row.description %><% } %></textarea>
+                </div>
+                <div class="form-group">
+                  <label>Image</label>
+                  <select class="form-control select2" name="image">
+                    <% if (operation == 'update') { %>
+                    <% medias.forEach(element => { %>
+                    <option value="<%= element.url %>" <% if (element.url == row.image) { %>selected<% } %>><%= element.name %></option>
+                    <% }) %>
+                    <% } else { %>
+                    <option value="" disabled selected>Select Image</option>
+                    <% medias.forEach(element => { %>
+                    <option value="<%= element.url %>"><%= element.name %></option>
+                    <% }) %>
+                    <% } %>
+                  </select>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label>Gif Image</label>
+                  <select class="form-control select2" name="gifImage">
+                    <option value="" selected>Select Gif Image</option>
+                    <% if (operation == 'update' && row.gifImage) { %>
+                    <% medias.forEach(element => { %>
+                    <option value="<%= element.url %>" <% if (element.url == row.gifImage) { %>selected<% } %>><%= element.name %></option>
+                    <% }) %>
+                    <% } else { %>
+                    <% medias.forEach(element => { %>
+                    <option value="<%= element.url %>"><%= element.name %></option>
+                    <% }) %>
+                    <% } %>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label>Input Type</label>
+                  <select class="form-control select2" name="inputType">
+                    <% if (operation == 'update') { %>
+                    <% inputTypes.forEach(element => { %>
+                    <option value="<%= element %>" <% if (element == row.inputType) { %>selected<% } %>><%= element %></option>
+                    <% }) %>
+                    <% } else { %>
+                    <option value="" disabled selected>Select Input Type</option>
+                    <% inputTypes.forEach(element => { %>
+                    <option value="<%= element %>"><%= element %></option>
+                    <% }) %>
+                    <% } %>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label>Target Type</label>
+                  <select class="form-control select2" name="targetType">
+                    <% if (operation == 'update') { %>
+                    <% targetTypes.forEach(element => { %>
+                    <option value="<%= element %>" <% if (element == row.targetType) { %>selected<% } %>><%= element %></option>
+                    <% }) %>
+                    <% } else { %>
+                    <option value="" disabled selected>Select Target Type</option>
+                    <% targetTypes.forEach(element => { %>
+                    <option value="<%= element %>"><%= element %></option>
+                    <% }) %>
+                    <% } %>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label>Extra Function</label>
+                  <select class="form-control select2" name="extraFunction">
+                    <option value="" selected>Select Extra Function</option>
+                    <% if (operation == 'update') { %>
+                    <% extraFunctions.forEach(element => { %>
+                    <option value="<%= element %>" <% if (element == row.extraFunction) { %>selected<% } %>><%= element %></option>
+                    <% }) %>
+                    <% } else { %>
+                    <% extraFunctions.forEach(element => { %>
+                    <option value="<%= element %>"><%= element %></option>
+                    <% }) %>
+                    <% } %>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="displayPosition">Display Position</label>
+                  <input type="number" class="form-control" name="displayPosition" id="displayPosition" placeholder="Enter number for Sorting Position" value="<% if(locals.row){ %><%= row.displayPosition %><% } %>">
+                </div>
+                <div class="form-group">
+                  <label for="templeTarget">Temple target</label>
+                  <input type="number" class="form-control" name="templeTarget" id="templeTarget" placeholder="Enter Temple Target" value="<% if(locals.row){ %><%= row.templeTarget %><% } %>">
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="card-footer">
+            <button type="submit" id="submitBtn" class="btn btn-success float-right">Submit</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<%- include('../../layouts/footer.ejs') %>
+<script>
+  $().ready(function() {
+
+    var table = '<%= table %>';
+    var id = '<% if(locals.id){ %><%= id %><% } %>';
+    var operation = '<%= operation %>';
+
+    var mainForm = $('#mainform').validate({
+      rules: {
+        name: {
+          required: true,
+          minlength: 3,
+          maxlength: 30
+        },
+        category: {
+          required: true
+        },
+        shortDescription: {
+          required: true,
+          minlength: 3,
+          maxlength: 100
+        },
+        description: {
+          required: false,
+          minlength: 3,
+          maxlength: 1000
+        },
+        image: {
+          required: true
+        },
+        gifImage: {
+          required: false
+        },
+        inputType: {
+          required: true
+        },
+        targetType: {
+          required: true
+        },
+        extraFunction: {
+          required: false
+        },
+        displayPosition: {
+          required: false,
+          number: true,
+          min: 1,
+          max: 99
+        },
+        templeTarget: {
+          required: false,
+          number: true,
+          min: 1,
+          max: 99
+        }
+      },
+      messages: {
+        name: {
+          required: "Please enter a name",
+          minlength: "Name must consist of at least 3 characters"
+        },
+        category: {
+          required: "Please select a category"
+        },
+        shortDescription: {
+          required: "Please enter a short description",
+          minlength: "Short description must consist of at least 3 characters",
+          maxlength: "Short description must consist of at most 100 characters"
+        },
+        description: {
+          required: "Please enter a description",
+          minlength: "Description must consist of at least 3 characters",
+          maxlength: "Description must consist of at most 1000 characters"
+        },
+        image: {
+          required: "Please select an image"
+        },
+        gifImage: {
+          required: "Please select a gif image"
+        },
+        inputType: {
+          required: "Please select an input type"
+        },
+        targetType: {
+          required: "Please select a target type"
+        },
+        extraFunction: {
+          required: "Please select an extra function"
+        },
+        displayPosition: {
+          required: "Please enter a sorting position",
+          number: "Display position must be a number",
+          min: "Display position must be at least 1",
+          max: "Display position must be at most 99"
+        },
+        templeTarget: {
+          required: "Please enter a temple target",
+          number: "Temple target must be a number",
+          min: "Temple target must be at least 1",
+          max: "Temple target must be at most 99"
+        }
+      },
+      errorElement: 'span',
+      errorPlacement: function(error, element) {
+        error.addClass('invalid-feedback');
+        element.closest('.form-group').append(error);
+      },
+      highlight: function(element, errorClass, validClass) {
+        $(element).addClass('is-invalid');
+      },
+      unhighlight: function(element, errorClass, validClass) {
+        $(element).removeClass('is-invalid');
+      }
+    });
+
+    <% if (new PermissionChecker(locals.user).hasAnyPermission(['edit_niyam','create_niyam'])) { %>
+
+    $("form#mainform").submit(() => {
+      if (mainForm.valid()) {
+        $('#submitBtn').attr('disabled', true);
+        $('#submitBtn').addClass('btn-progress')
+        $.ajax({
+          url: "/admin/" + table + "/" + operation + "/" + id,
+          type: "POST",
+          data: $("form#mainform").serialize(),
+          success: function(data) {
+            if (data.status) {
+              Toast.fire({
+                icon: 'success',
+                title: data.message
+              });
+              if (operation == 'create') {
+                setTimeout(() => {
+                  location.replace("/admin/" + table + "/update/" + data.id);
+                }, 2000);
+              }
+            } else {
+              Toast.fire({
+                icon: 'error',
+                title: data.message
+              });
+            }
+            $('#submitBtn').attr('disabled', false);
+            $('#submitBtn').removeClass('btn-progress')
+          },
+          error: function(data) {
+            Toast.fire({
+              icon: 'error',
+              title: data.status + ' ' + data.statusText
+            });
+            $('#submitBtn').attr('disabled', false);
+            $('#submitBtn').removeClass('btn-progress')
+          }
+        })
+
+      } else {
+        mainForm.focusInvalid();
+      }
+      return false;
+    });
+
+    <% } %>
+
+  });
+</script>
+
+</body>
+
+</html>

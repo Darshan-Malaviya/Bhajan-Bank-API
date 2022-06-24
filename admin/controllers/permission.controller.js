@@ -74,6 +74,7 @@ export const permissionCreatePostController = async (req, res) => {
 							return res.send({
 								status: true,
 								message: permission.name + " Permission created successfully",
+								id: permission._id,
 							});
 						} else {
 							return res.send({

@@ -78,6 +78,7 @@ export const categoryCreatePostController = async (req, res) => {
 						if (doc) {
 							return res.send({
 								status: true,
+								id: doc._id,
 								message: doc.name + "Category created successfully",
 							});
 						} else {

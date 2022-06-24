@@ -1,0 +1,174 @@
+<%- include('../../layouts/head.ejs') %>
+<style>
+
+</style>
+<%- include('../../layouts/sidebar.ejs') %>
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="card card-primary">
+        <div class="card-body">
+          <table id="zero_config" class="table table-bordered table-striped">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Category</th>
+                <% if (new PermissionChecker(locals.user).hasPermission('edit_niyam')) { %>
+                <th>Active</th>
+                <% } %>
+                <% if (new PermissionChecker(locals.user).hasAnyPermission(['edit_niyam','delete_niyam','view_niyam'])) { %>
+                <th class="text-right">Actions</th>
+                <% } %>
+              </tr>
+            </thead>
+            <tbody>
+              <%for(var i=0; i < rows.length; i++) { %>
+              <% var row=rows[i] %>
+              <tr id="row<%= row._id %>">
+                <td data-toggle="tooltip" title="<%= row._id %>">
+                  <%= row.name %>
+                </td>
+                <td>
+                  <%= row.category.name %>
+                </td>
+                <% if (new PermissionChecker(locals.user).hasPermission('edit_niyam')) { %>
+                <td>
+                  <div class="custom-control custom-switch">
+                    <input type="checkbox" class="custom-control-input activeCheckbox" data-id="<%= row._id %>" id="active<%= row._id %>" <% if (row.isActive) { %>checked<% } %>>
+                    <label class="custom-control-label" for="active<%= row._id %>"></label>
+                  </div>
+                </td>
+                <% } %>
+                <% if (new PermissionChecker(locals.user).hasAnyPermission(['edit_niyam','delete_niyam','view_niyam'])) { %>
+                <td class="text-right">
+                  <div class="call-chat">
+                    <% if (new PermissionChecker(locals.user).hasPermission('view_niyam')) { %>
+                    <button data-id="<%= row._id %>" class="btn btn-outline-info a-btn-slide-text btn-sm modal-view-btn">
+                      <i class="fas fa-eye-slash" aria-hidden="true"></i>
+                    </button>
+                    <% } %>
+                    <% if (new PermissionChecker(locals.user).hasPermission('edit_niyam')) { %>
+                    <a href="/admin/<%= table %>/update/<%= row._id %>" class="btn a-btn-slide-text btn-outline-warning btn-sm">
+                      <i class="fas fa-edit"></i>
+                    </a>
+                    <% } %>
+                    <% if (new PermissionChecker(locals.user).hasPermission('delete_niyam')) { %>
+                    <button data-href="/admin/<%= table %>/delete/<%= row._id %>" data-id="<%= row._id %>" class="btn a-btn-slide-text btn-outline-danger btn-sm btn-delete">
+                      <i class="fas fa-trash"></i>
+                    </button>
+                    <% } %>
+                  </div>
+                </td>
+                <% } %>
+              </tr>
+              <% } %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%- include('../../layouts/footer.ejs') %>
+<script>
+  $(document).ready(function() {
+
+    <% if (new PermissionChecker(locals.user).hasPermission('edit_niyam')) { %>
+
+    $(".activeCheckbox").on('change', function() {
+      var $this = $(this);
+      $(this).attr('disabled', true);
+      var id = $(this).attr('data-id');
+      var isActive = $(this).is(':checked');
+      var url = '/admin/<%= table %>/update-status/' + id;
+      var data = {
+        isActive: isActive,
+      };
+      $.ajax({
+        url: url,
+        type: 'POST',
+        data: data,
+        success: function(data) {
+          if (data.status) {
+            Toast.fire({
+              icon: 'success',
+              title: data.message
+            });
+          } else {
+            Toast.fire({
+              icon: 'error',
+              title: data.message
+            });
+          }
+        },
+        error: function(data) {
+          $this.prop('checked', !isActive);
+          Toast.fire({
+            icon: 'error',
+            title: data
+          });
+        },
+      });
+      $(this).attr('disabled', false);
+    });
+
+    <% } %>
+
+    <% if (new PermissionChecker(locals.user).hasPermission('delete_niyam')) { %>
+
+    $('.btn-delete').on('click', function() {
+      var $this = $(this);
+      var id = $this.attr('data-id');
+      var url = $this.attr('data-href');
+
+      swal({
+          title: 'Are you sure?',
+          text: "Once deleted, you will not be able to redo this action It's best to deactivate the user first",
+          icon: 'warning',
+          buttons: true,
+          dangerMode: true,
+        })
+        .then((willDelete) => {
+          if (willDelete) {
+            $.ajax({
+              url: url,
+              type: 'DELETE',
+              success: function(data) {
+                if (data.status) {
+                  Toast.fire({
+                    icon: 'success',
+                    title: data.message
+                  });
+                  $('#row' + id).remove();
+                } else {
+                  Toast.fire({
+                    icon: 'error',
+                    title: data.message
+                  });
+                }
+              },
+              error: function(data) {
+                console.log(data);
+                Toast.fire({
+                  icon: 'error',
+                  title: data.status + ' ' + data.statusText
+                });
+              }
+            });
+          } else {
+            swal('Your data is safe');
+          }
+        });
+    });
+
+    <% } %>
+
+    $('#zero_config').DataTable();
+
+  });
+</script>
+</body>
+
+</html>

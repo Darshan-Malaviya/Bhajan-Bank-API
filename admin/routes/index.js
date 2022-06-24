@@ -7,6 +7,7 @@ import permissionRouter from "./permission.route.js";
 import adminRouter from "./admin.route.js";
 import categoryRouter from "./category.route.js";
 import mediaRouter from "./media.route.js";
+import niyamRouter from "./niyam.route.js";
 import {
 	loginGetController,
 	loginPostController,
@@ -52,5 +53,8 @@ router.use("/admin", userVerification, adminRouter);
 
 // admin/media
 router.use("/media", userVerification, mediaRouter);
+
+// admin/niyam
+router.use("/niyam", userVerification, niyamRouter);
 
 export default router;
