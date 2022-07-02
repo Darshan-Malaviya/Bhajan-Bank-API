@@ -127,16 +127,16 @@
                 icon: 'success',
                 title: data.message
               });
-              if (operation == 'create') {
-                setTimeout(() => {
-                  location.replace("/admin/" + table + "/update/" + data.id);
-                }, 2000);
-              }
             } else {
               Toast.fire({
                 icon: 'error',
                 title: data.message
               });
+            }
+            if (data.redirect) {
+              setTimeout(function() {
+                window.location.href = data.redirect;
+              }, 1000);
             }
             $('#submitBtn').attr('disabled', false);
             $('#submitBtn').removeClass('btn-progress')
@@ -146,6 +146,11 @@
               icon: 'error',
               title: data.status + ' ' + data.statusText
             });
+            if (data.responseJSON.redirect) {
+              setTimeout(function() {
+                window.location.href = data.responseJSON.redirect;
+              }, 1000);
+            }
             $('#submitBtn').attr('disabled', false);
             $('#submitBtn').removeClass('btn-progress')
           }

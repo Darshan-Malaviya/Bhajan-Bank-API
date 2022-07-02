@@ -25,4 +25,14 @@ export const redisGet = async (key) => {
 	}
 };
 
+export const redisFlushAll = async () => {
+	try {
+		await redis.flushall();
+	} catch (error) {
+		console.log(error);
+		return false;
+	}
+	return true;
+};
+
 // export default redis;

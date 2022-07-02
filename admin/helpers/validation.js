@@ -92,3 +92,48 @@ export const resetPasswordJoiSchema = Joi.object(
 		stripUnknown: true,
 	}
 );
+
+export const bookJoiSchema = Joi.object(
+	{
+		name: Joi.string().min(3).max(30).required(),
+		author: Joi.string().min(3).max(30).required(),
+		publisher: Joi.string().min(3).max(30).required(),
+		description: Joi.string().required(),
+		image: Joi.string().required(),
+		url: Joi.string().required(),
+		csrfToken: Joi.string().length(32).required(),
+	},
+	{
+		abortEarly: false,
+		stripUnknown: true,
+	}
+);
+
+export const bookDataJoiSchema = Joi.object(
+	{
+		title: Joi.string().min(3).max(30).required(),
+		book: Joi.string().alphanum().length(24).required(),
+		data: Joi.string().required(),
+		csrfToken: Joi.string().length(32).required(),
+	},
+	{
+		abortEarly: false,
+		stripUnknown: true,
+	}
+);
+
+export const bookWordJoiSchema = Joi.object(
+	{
+		word: Joi.string().required(),
+		book: Joi.string().alphanum().length(24).required(),
+		meaning: Joi.string().required(),
+		color: Joi.string().required(),
+		alignment: Joi.string().valid("left", "center", "right").required(),
+		bold: Joi.boolean().required(),
+		underline: Joi.boolean().required(),
+	},
+	{
+		abortEarly: false,
+		stripUnknown: true,
+	}
+);

@@ -38,7 +38,7 @@ export const categorysController = async (req, res) => {
 export const categoryCreateGetController = async (req, res) => {
 	if (new PermissionChecker(req.user).hasPermission("create_category")) {
 		const csrfToken = randomStringFromCrypto(16);
-		redisSet(csrfToken, "csrfToken", 60 * 5); // 5 minutes
+		redisSet(csrfToken, "categoryCreate", 60 * 5); // 5 minutes
 
 		const resParams = {
 			pagePath: "Category Create",
@@ -61,7 +61,7 @@ export const categoryCreateGetController = async (req, res) => {
 export const categoryCreatePostController = async (req, res) => {
 	if (new PermissionChecker(req.user).hasPermission("create_category")) {
 		const csrfValue = await redisGet(req.body.csrfToken);
-		if (csrfValue) {
+		if (csrfValue == "categoryCreate") {
 			Category.create(
 				{
 					name: req.body.name,
@@ -94,15 +94,15 @@ export const categoryCreatePostController = async (req, res) => {
 			return res.send({
 				status: false,
 				message: "Form expired. Please try again",
+				redirect: "/admin/category/create",
 			});
 		}
 	} else {
-		messagePusher(
-			req,
-			"danger",
-			"You do not have permission to view this page"
-		);
-		res.redirect("/admin");
+		return res.send({
+			status: false,
+			message: "You do not have permission to view this page",
+			redirect: "/admin",
+		});
 	}
 };
 
@@ -110,7 +110,7 @@ export const categoryUpdateGetController = async (req, res) => {
 	if (new PermissionChecker(req.user).hasPermission("edit_category")) {
 		const id = req.params.id;
 		const csrfToken = randomStringFromCrypto(16);
-		redisSet(csrfToken, "csrfToken", 60 * 5); // 5 minutes
+		redisSet(csrfToken, "categoryUpdate", 60 * 5); // 5 minutes
 
 		const row = await Category.findById(id).lean();
 		const resParams = {
@@ -137,7 +137,7 @@ export const categoryUpdatePostController = async (req, res, next) => {
 	if (new PermissionChecker(req.user).hasPermission("edit_category")) {
 		const id = req.params.id;
 		const csrfValue = await redisGet(req.body.csrfToken);
-		if (csrfValue) {
+		if (csrfValue == "categoryUpdate") {
 			Category.findByIdAndUpdate(
 				id,
 				{
@@ -177,15 +177,15 @@ export const categoryUpdatePostController = async (req, res, next) => {
 			return res.send({
 				status: false,
 				message: "Form expired. Please try again",
+				redirect: "/admin/category/update/" + id,
 			});
 		}
 	} else {
-		messagePusher(
-			req,
-			"danger",
-			"You do not have permission to view this page"
-		);
-		res.redirect("/admin");
+		return res.send({
+			status: false,
+			message: "You do not have permission to update the category",
+			redirect: "/admin",
+		});
 	}
 };
 
@@ -213,12 +213,11 @@ export const categoryDeleteController = (req, res) => {
 			}
 		});
 	} else {
-		messagePusher(
-			req,
-			"danger",
-			"You do not have permission to view this page"
-		);
-		res.redirect("/admin");
+		return res.send({
+			status: false,
+			message: "You do not have permission to delete the category",
+			redirect: "/admin",
+		});
 	}
 };
 
@@ -260,11 +259,10 @@ export const categoryStatusController = async (req, res) => {
 			}
 		);
 	} else {
-		messagePusher(
-			req,
-			"danger",
-			"You do not have permission to update category status"
-		);
-		res.redirect("/admin");
+		return res.send({
+			status: false,
+			message: "You do not have permission to update the category",
+			redirect: "/admin",
+		});
 	}
 };

@@ -156,6 +156,11 @@
                   title: data.message
                 });
               }
+              if (data.redirect) {
+                setTimeout(function() {
+                  window.location.href = data.redirect;
+                }, 1000);
+              }
               $('#submitbtn').attr('disabled', false);
               $('#submitbtn').removeClass('btn-progress');
             },
@@ -164,6 +169,11 @@
                 icon: 'error',
                 title: data.status + ' ' + data.statusText
               });
+              if (data.responseJSON.redirect) {
+                setTimeout(function() {
+                  window.location.href = data.responseJSON.redirect;
+                }, 1000);
+              }
               $('#submitbtn').attr('disabled', false);
               $('#submitbtn').removeClass('btn-progress');
             }

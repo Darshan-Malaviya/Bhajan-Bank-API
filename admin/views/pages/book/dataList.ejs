@@ -12,10 +12,14 @@
           <table id="zero_config" class="table table-bordered table-striped">
             <thead>
               <tr>
-                <th>Name</th>
-                <th>Identifier</th>
+                <th>Title</th>
+                <th>book</th>
+                <% if (new PermissionChecker(locals.user).hasPermission('edit_bookData')) { %>
                 <th>Active</th>
+                <% } %>
+                <% if (new PermissionChecker(locals.user).hasAnyPermission(['edit_bookData','delete_bookData'])) { %>
                 <th class="text-right">Actions</th>
+                <% } %>
               </tr>
             </thead>
             <tbody>
@@ -23,27 +27,35 @@
               <% var row=rows[i] %>
               <tr id="row<%= row._id %>">
                 <td data-toggle="tooltip" title="<%= row._id %>">
-                  <%= row.name %>
+                  <%= row.title%>
                 </td>
                 <td>
-                  <%= row.identifier %>
+                  <%= row.book.name %>
                 </td>
+                <% if (new PermissionChecker(locals.user).hasPermission('edit_bookData')) { %>
                 <td>
                   <div class="custom-control custom-switch">
-                    <input type="checkbox" class="custom-control-input activeCheckbox" data-id="<%= row._id %>" id="customSwitch<%= row._id %>" <% if (row.isActive) { %>checked<% } %>>
-                    <label class="custom-control-label" for="customSwitch<%= row._id %>"></label>
+                    <input type="checkbox" class="custom-control-input activeCheckbox" data-id="<%= row._id %>" id="active<%= row._id %>" <% if (row.isActive) { %>checked<% } %>>
+                    <label class="custom-control-label" for="active<%= row._id %>"></label>
                   </div>
                 </td>
+                <% } %>
+                <% if (new PermissionChecker(locals.user).hasAnyPermission(['edit_bookData','delete_bookData'])) { %>
                 <td class="text-right">
                   <div class="call-chat">
+                    <% if (new PermissionChecker(locals.user).hasPermission('edit_bookData')) { %>
                     <a href="/admin/<%= table %>/update/<%= row._id %>" class="btn a-btn-slide-text btn-outline-warning btn-sm">
                       <i class="fas fa-edit"></i>
                     </a>
-                    <button data-id="<%= row._id %>" class="btn a-btn-slide-text btn-outline-danger btn-sm btn-delete">
+                    <% } %>
+                    <% if (new PermissionChecker(locals.user).hasPermission('delete_bookData')) { %>
+                    <button data-href="/admin/<%= table %>/<%= row._id %>" data-id="<%= row._id %>" class="btn a-btn-slide-text btn-outline-danger btn-sm btn-delete">
                       <i class="fas fa-trash"></i>
                     </button>
+                    <% } %>
                   </div>
                 </td>
+                <% } %>
               </tr>
               <% } %>
             </tbody>
@@ -58,7 +70,7 @@
 <script>
   $(document).ready(function() {
 
-    var table = '<%= table %>';
+    <% if (new PermissionChecker(locals.user).hasPermission('edit_bookData')) { %>
 
     $(".activeCheckbox").on('change', function() {
       var $this = $(this);
@@ -102,15 +114,19 @@
               window.location.href = data.responseJSON.redirect;
             }, 1000);
           }
-        }
+        },
       });
       $(this).attr('disabled', false);
     });
 
+    <% } %>
+
+    <% if (new PermissionChecker(locals.user).hasPermission('delete_bookData')) { %>
+
     $('.btn-delete').on('click', function() {
       var $this = $(this);
       var id = $this.attr('data-id');
-      var url = '/admin/' + table + '/delete/' + id;
+      var url = $this.attr('data-href');
 
       swal({
           title: 'Are you sure?',
@@ -161,6 +177,8 @@
           }
         });
     });
+
+    <% } %>
 
     $('#zero_config').DataTable();
 

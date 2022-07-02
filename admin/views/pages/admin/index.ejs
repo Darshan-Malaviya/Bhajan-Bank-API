@@ -78,6 +78,7 @@
   $(document).ready(function() {
 
     <% if (new PermissionChecker(locals.user).hasPermission('edit_admin')) { %>
+
     $(".activeCheckbox").on('change', function() {
       var $this = $(this);
       $(this).attr('disabled', true);
@@ -103,14 +104,23 @@
               title: data.message
             });
           }
+          if (data.redirect) {
+            setTimeout(function() {
+              window.location.href = data.redirect;
+            }, 2000);
+          }
         },
         error: function(data) {
-          $this.prop('checked', !isActive);
           Toast.fire({
             icon: 'error',
-            title: data
+            title: data.status + ' ' + data.statusText
           });
-        },
+          if (data.responseJSON.redirect) {
+            setTimeout(function() {
+              window.location.href = data.responseJSON.redirect;
+            }, 2000);
+          }
+        }
       });
       $(this).attr('disabled', false);
     });
@@ -140,14 +150,23 @@
               title: data.message
             });
           }
+          if (data.redirect) {
+            setTimeout(function() {
+              window.location.href = data.redirect;
+            }, 2000);
+          }
         },
         error: function(data) {
-          $this.prop('checked', !isSuperUser);
           Toast.fire({
             icon: 'error',
-            title: data
+            title: data.status + ' ' + data.statusText
           });
-        },
+          if (data.responseJSON.redirect) {
+            setTimeout(function() {
+              window.location.href = data.responseJSON.redirect;
+            }, 2000);
+          }
+        }
       });
       $this.attr('disabled', false);
     })
@@ -186,13 +205,22 @@
                     title: data.message
                   });
                 }
+                if (data.redirect) {
+                  setTimeout(function() {
+                    window.location.href = data.redirect;
+                  }, 2000);
+                }
               },
               error: function(data) {
-                console.log(data);
                 Toast.fire({
                   icon: 'error',
                   title: data.status + ' ' + data.statusText
                 });
+                if (data.responseJSON.redirect) {
+                  setTimeout(function() {
+                    window.location.href = data.responseJSON.redirect;
+                  }, 2000);
+                }
               }
             });
           } else {

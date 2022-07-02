@@ -11,5 +11,12 @@ export const userVerification = async (req, res, next) => {
 		req.app.locals.PermissionChecker = PermissionChecker;
 		return next();
 	}
-	return res.redirect("/admin/login?next=" + req.originalUrl);
+	if (req.xhr) {
+		return res.status(403).json({
+			message: "You are not logged in",
+			redirect: "/admin/login?next=" + req.originalUrl,
+		});
+	} else {
+		return res.redirect("/admin/login?next=" + req.originalUrl);
+	}
 };

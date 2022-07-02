@@ -50,7 +50,7 @@ export const getUserPermissionsByContentTypeGroup = async (userId) => {
 		},
 		{
 			$group: {
-				_id: "$contentType.identifier",
+				_id: "$contentType.name",
 				permissions: {
 					$push: {
 						id: "$_id",

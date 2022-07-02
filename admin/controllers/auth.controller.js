@@ -11,7 +11,7 @@ export const loginGetController = (req, res) => {
 		return res.redirect(next);
 	}
 	const csrfToken = randomStringFromCrypto(16);
-	redisSet(csrfToken, "csrfToken", 60 * 1); // 1 minute
+	redisSet(csrfToken, "login", 60 * 1); // 1 minute
 
 	const resParams = {
 		pagePath: "Login",
@@ -25,7 +25,7 @@ export const loginGetController = (req, res) => {
 export const loginPostController = async (req, res) => {
 	const { email, password, csrfToken } = req.body;
 	const csrfValue = await redisGet(csrfToken);
-	if (csrfValue) {
+	if (csrfValue === "login") {
 		try {
 			var user = await Admin.findOne(
 				{ email: email, isActive: true },
@@ -69,6 +69,7 @@ export const loginPostController = async (req, res) => {
 		return res.send({
 			status: false,
 			message: "form expired, please try again",
+			redirect: "/admin/login",
 		});
 	}
 };

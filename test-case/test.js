@@ -1,8 +1,8 @@
 import { Admin } from "../admin/models/index.js";
 
-console.log(
-	"all permissions and user granted permissions with  granted flag true"
-);
+// console.log(
+// 	"all permissions and user granted permissions with  granted flag true"
+// );
 
 // permission granted to the specific admin user
 
@@ -57,7 +57,7 @@ console.log(
 // 		console.log(err);
 // 	});
 
-console.log("permission list group by content type");
+// console.log("permission list group by content type");
 
 // permission list by content type
 
@@ -101,7 +101,7 @@ console.log("permission list group by content type");
 // 		res.send(err);
 // 	});
 
-console.log("users granted permission list group by content type");
+// console.log("users granted permission list group by content type");
 
 // Permission.aggregate([
 // 	{ $match: { isActive: true } },

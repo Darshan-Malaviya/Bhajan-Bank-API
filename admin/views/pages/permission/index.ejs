@@ -39,7 +39,7 @@
                 <% if (new PermissionChecker(locals.user).hasPermission('edit_permission')) { %>
                 <td>
                   <div class="custom-control custom-switch">
-                    <input type="checkbox" class="custom-control-input" data-id="<%= row._id %>" id="customSwitch<%= row._id %>" <% if (row.isActive) { %>checked<% } %>>
+                    <input type="checkbox" class="custom-control-input activeCheckbox" data-id="<%= row._id %>" id="customSwitch<%= row._id %>" <% if (row.isActive) { %>checked<% } %>>
                     <label class="custom-control-label" for="customSwitch<%= row._id %>"></label>
                   </div>
                 </td>
@@ -77,7 +77,7 @@
     var table = '<%= table %>';
 
     <% if (new PermissionChecker(locals.user).hasPermission('edit_permission')) { %>
-    $("input[type=checkbox]").on('change', function() {
+    $(".activeCheckbox").on('change', function() {
       var $this = $(this);
       $(this).attr('disabled', true);
       var id = $(this).attr('data-id');
@@ -102,6 +102,11 @@
               title: data.message
             });
           }
+          if (data.redirect) {
+            setTimeout(function() {
+              window.location.href = data.redirect;
+            }, 1000);
+          }
         },
         error: function(data) {
           $this.prop('checked', !isActive);
@@ -109,6 +114,11 @@
             icon: 'error',
             title: data.status + ' ' + data.statusText
           });
+          if (data.responseJSON.redirect) {
+            setTimeout(function() {
+              window.location.href = data.responseJSON.redirect;
+            }, 1000);
+          }
         }
       });
       $(this).attr('disabled', false);
@@ -146,6 +156,11 @@
                     title: data.message
                   });
                 }
+                if (data.redirect) {
+                  setTimeout(function() {
+                    window.location.href = data.redirect;
+                  }, 1000);
+                }
               },
               error: function(data) {
                 console.log(data);
@@ -153,6 +168,11 @@
                   icon: 'error',
                   title: data.status + ' ' + data.statusText
                 });
+                if (data.responseJSON.redirect) {
+                  setTimeout(function() {
+                    window.location.href = data.responseJSON.redirect;
+                  }, 1000);
+                }
               }
             });
           } else {

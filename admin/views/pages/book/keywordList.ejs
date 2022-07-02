@@ -1,0 +1,463 @@
+<%- include('../../layouts/head.ejs') %>
+<style>
+
+</style>
+<%- include('../../layouts/sidebar.ejs') %>
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="card card-primary">
+        <div class="card-body">
+          <table id="zero_config" class="table table-bordered table-striped">
+            <thead>
+              <tr>
+                <th>unique Id</th>
+                <th>word</th>
+                <th>book</th>
+                <% if (new PermissionChecker(locals.user).hasPermission('edit_bookWord')) { %>
+                <th>Active</th>
+                <% } %>
+                <% if (new PermissionChecker(locals.user).hasAnyPermission(['edit_bookWord','delete_bookWord'])) { %>
+                <th class="text-right">Actions</th>
+                <% } %>
+              </tr>
+            </thead>
+            <tbody>
+              <%for(var i=0; i < rows.length; i++) { %>
+              <% var row=rows[i] %>
+              <tr id="row<%= row._id %>">
+                <td data-toggle="tooltip" title="<%= row._id %>">
+                  <%= row.uniqueId %>
+                </td>
+                <td>
+                  <%= row.word %>
+                </td>
+                <td>
+                  <%= row.book.name %>
+                </td>
+                <% if (new PermissionChecker(locals.user).hasPermission('edit_bookWord')) { %>
+                <td>
+                  <div class="custom-control custom-switch">
+                    <input type="checkbox" class="custom-control-input activeCheckbox" data-id="<%= row._id %>" id="active<%= row._id %>" <% if (row.isActive) { %>checked<% } %>>
+                    <label class="custom-control-label" for="active<%= row._id %>"></label>
+                  </div>
+                </td>
+                <% } %>
+                <% if (new PermissionChecker(locals.user).hasAnyPermission(['edit_bookWord','delete_bookWord'])) { %>
+                <td class="text-right">
+                  <div class="call-chat">
+                    <% if (new PermissionChecker(locals.user).hasPermission('edit_bookWord')) { %>
+                    <button data-id="<%= row._id %>" class="btn a-btn-slide-text btn-outline-warning btn-sm btn-edit">
+                      <i class="fas fa-edit"></i>
+                    </button>
+                    <% } %>
+                    <% if (new PermissionChecker(locals.user).hasPermission('delete_bookWord')) { %>
+                    <button data-id="<%= row._id %>" class="btn a-btn-slide-text btn-outline-danger btn-sm btn-delete">
+                      <i class="fas fa-trash"></i>
+                    </button>
+                    <% } %>
+                  </div>
+                </td>
+                <% } %>
+              </tr>
+              <% } %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="editModal">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title" id="wordTitle">Large Modal</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form id="wordForm">
+          <div class="row">
+            <div class="col-sm-6">
+              <div class="form-group">
+                <div class="form-group">
+                  <label for="word">word</label>
+                  <input type="text" class="form-control" name="word" id="word" placeholder="Enter word">
+                </div>
+              </div>
+            </div>
+            <div class="col-sm-6">
+              <div class="form-group">
+                <label>Book</label>
+                <select class="form-control select2" name="book" id="wordBook">
+                  <option value="" selected>Select Image</option>
+                  <% books.forEach(element => { %>
+                  <option value="<%= element._id %>"><%= element.name %></option>
+                  <% }) %>
+                </select>
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="meaning">Meaning</label>
+            <textarea class="form-control" id="meaning" name="meaning" rows="5"></textarea>
+          </div>
+          <div class="form-group">
+            <label>Style</label>
+            <div class="row">
+              <div class="col-sm-3">
+                <div class="form-group">
+                  <div class="custom-control custom-checkbox">
+                    <input type="checkbox" class="custom-control-input" id="bold" name="bold" value="bold">
+                    <label for="bold" class="custom-control-label">Bold</label>
+                  </div>
+                </div>
+              </div>
+              <div class="col-sm-3">
+                <div class="form-group">
+                  <div class="custom-control custom-checkbox">
+                    <input type="checkbox" class="custom-control-input" id="underline" name="underline" value="underline">
+                    <label for="underline" class="custom-control-label">Underline</label>
+                  </div>
+                </div>
+              </div>
+              <div class="col-sm-3">
+                <div class="row">
+                  <label>Alignment</label>
+                  <div class="form-group">
+                    <div class="col-3">
+                      <div class="custom-control custom-radio">
+                        <input class="custom-control-input" type="radio" value="left" id="left" name="alignment" checked>
+                        <label for="left" class="custom-control-label">Left</label>
+                      </div>
+                    </div>
+                    <div class="col-3">
+                      <div class="custom-control custom-radio">
+                        <input class="custom-control-input" type="radio" value="center" id="center" name="alignment">
+                        <label for="center" class="custom-control-label">Center</label>
+                      </div>
+                    </div>
+                    <div class="col-3">
+                      <div class="custom-control custom-radio">
+                        <input class="custom-control-input" type="radio" value="right" id="right" name="alignment">
+                        <label for="right" class="custom-control-label">Right</label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-sm-6">
+                <div class="form-group">
+                  <label>color</label>
+                  <input type="color" class="form-control" name="color" id="color">
+                </div>
+              </div>
+            </div>
+          </div>
+      </div>
+      <div class="modal-footer justify-content-between">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="submit" id="wordSubmitBtn" class="btn btn-primary">Save</button>
+        </form>
+      </div>
+    </div>
+    <!-- /.modal-content -->
+  </div>
+  <!-- /.modal-dialog -->
+</div>
+<!-- /.modal -->
+
+<%- include('../../layouts/footer.ejs') %>
+<script>
+  $(document).ready(function() {
+
+    var table = '<%= table %>';
+
+    <% if (new PermissionChecker(locals.user).hasPermission('edit_bookWord')) { %>
+
+    var wordForm = $('#wordForm').validate({
+      rules: {
+        word: {
+          required: true,
+          minlength: 3,
+          maxlength: 50
+        },
+        meaning: {
+          minlength: 3,
+        },
+        book: {
+          required: true
+        },
+        alignment: {
+          required: true
+        },
+        color: {
+          required: true
+        }
+      },
+      messages: {
+        word: {
+          required: "Please enter word",
+          minlength: "Word must be at least 3 characters long",
+          maxlength: "Word must be at most 50 characters long"
+        },
+        meaning: {
+          minlength: "Meaning must be at least 3 characters long",
+        },
+        book: {
+          required: "Please select book"
+        },
+        alignment: {
+          required: "Please select alignment"
+        },
+        color: {
+          required: "Please select color"
+        }
+      },
+      errorElement: "em",
+      errorPlacement: function(error, element) {
+        error.addClass('invalid-feedback');
+        element.closest('.form-group').append(error);
+      },
+      highlight: function(element, errorClass, validClass) {
+        $(element).addClass('is-invalid');
+      },
+      unhighlight: function(element, errorClass, validClass) {
+        $(element).removeClass('is-invalid');
+      }
+    });
+
+    $(".activeCheckbox").on('change', function() {
+      var $this = $(this);
+      $(this).attr('disabled', true);
+      var id = $(this).attr('data-id');
+      var isActive = $(this).is(':checked');
+      var url = '/admin/book/word/update-status/' + id;
+      var data = {
+        isActive: isActive,
+      };
+      $.ajax({
+        url: url,
+        type: 'POST',
+        data: data,
+        success: function(data) {
+          if (data.status) {
+            Toast.fire({
+              icon: 'success',
+              title: data.message
+            });
+          } else {
+            Toast.fire({
+              icon: 'error',
+              title: data.message
+            });
+          }
+          if (data.redirect) {
+            setTimeout(function() {
+              window.location.href = data.redirect;
+            }, 1000);
+          }
+        },
+        error: function(data) {
+          $this.prop('checked', !isActive);
+          Toast.fire({
+            icon: 'error',
+            title: data.status + ' ' + data.statusText
+          });
+          if (data.responseJSON.redirect) {
+            setTimeout(function() {
+              window.location.href = data.responseJSON.redirect;
+            }, 1000);
+          }
+        },
+      });
+      $(this).attr('disabled', false);
+    });
+
+    $(".btn-edit").on('click', function() {
+      var id = $(this).attr('data-id');
+      var url = '/admin/book/word/' + id;
+
+      $.ajax({
+        url: url,
+        type: 'GET',
+        success: function(data) {
+          if (data.status) {
+            $('#editModal').modal('show');
+            $('#wordTitle').text('Edit Word : ' + data.data.word);
+            $('#word').val(data.data.word);
+            $('#meaning').val(data.data.meaning);
+            $('#wordBook').val(data.data.book._id);
+            $('#color').val(data.data.style.color);
+            $('#bold').prop('checked', data.data.style.bold);
+            $('#underline').prop('checked', data.data.style.underline);
+            $('#left').prop('checked', data.data.style.align === 'left');
+            $('#center').prop('checked', data.data.style.align === 'center');
+            $('#right').prop('checked', data.data.style.align === 'right');
+            $('#wordSubmitBtn').attr('data-id', data.data._id);
+          } else {
+            Toast.fire({
+              icon: 'error',
+              title: data.message
+            });
+          }
+          if (data.redirect) {
+            setTimeout(function() {
+              window.location.href = data.redirect;
+            }, 1000);
+          }
+        },
+        error: function(data) {
+          Toast.fire({
+            icon: 'error',
+            title: data.status + ' ' + data.statusText
+          });
+          if (data.responseJSON.redirect) {
+            setTimeout(function() {
+              window.location.href = data.responseJSON.redirect;
+            }, 1000);
+          }
+        },
+      });
+    });
+
+    $('#wordForm').submit(() => {
+      if (wordForm.valid()) {
+        $('#wordSubmitBtn').attr('disabled', true);
+        $('#wordSubmitBtn').addClass('btn-progress')
+        var id = $('#wordSubmitBtn').attr('data-id');
+        var url = '/admin/book/word/update/' + id;
+        var data = {
+          word: $('#word').val(),
+          meaning: $('#meaning').val(),
+          book: $('#wordBook option:selected').val(),
+          color: $('#color').val(),
+          bold: $('#bold').is(':checked'),
+          underline: $('#underline').is(':checked'),
+          alignment: $('input[name=alignment]:checked').val()
+        };
+        $.ajax({
+          url: url,
+          type: 'POST',
+          data: data,
+          success: function(data) {
+            if (data.status) {
+              Toast.fire({
+                icon: 'success',
+                title: data.message
+              });
+            } else {
+              Toast.fire({
+                icon: 'error',
+                title: data.message
+              });
+            }
+            $('#editModal').modal('hide');
+            $('#wordForm').get(0).reset();
+            $('#wordSubmitBtn').attr('data-id', '');
+            $('#wordTitle').text('');
+            $('#wordSubmitBtn').removeClass('btn-progress');
+            $('#wordSubmitBtn').attr('disabled', false);
+            if (data.redirect) {
+              setTimeout(function() {
+                window.location.href = data.redirect;
+              }, 1000);
+            }
+          },
+          error: function(data) {
+            Toast.fire({
+              icon: 'error',
+              title: data.status + ' ' + data.statusText
+            });
+            $('#editModal').modal('hide');
+            $('#wordForm').get(0).reset();
+            $('#wordSubmitBtn').attr('data-id', '');
+            $('#wordTitle').text('');
+            $('#wordSubmitBtn').removeClass('btn-progress');
+            $('#wordSubmitBtn').attr('disabled', false);
+            if (data.responseJSON.redirect) {
+              setTimeout(function() {
+                window.location.href = data.responseJSON.redirect;
+              }, 1000);
+            }
+          },
+        });
+      } else {
+        wordForm.focusInvalid();
+      }
+      return false;
+    });
+
+    <% } %>
+
+    <% if (new PermissionChecker(locals.user).hasPermission('delete_bookWord')) { %>
+
+    $('.btn-delete').on('click', function() {
+      var $this = $(this);
+      var id = $this.attr('data-id');
+
+      swal({
+          title: 'Are you sure?',
+          text: "Once deleted, you will not be able to redo this action It's best to deactivate the user first",
+          icon: 'warning',
+          buttons: true,
+          dangerMode: true,
+        })
+        .then((willDelete) => {
+          if (willDelete) {
+            $.ajax({
+              url: '/admin/book/word/delete/' + id,
+              type: 'DELETE',
+              success: function(data) {
+                if (data.status) {
+                  Toast.fire({
+                    icon: 'success',
+                    title: data.message
+                  });
+                  $('#row' + id).remove();
+                } else {
+                  Toast.fire({
+                    icon: 'error',
+                    title: data.message
+                  });
+                }
+                if (data.redirect) {
+                  setTimeout(function() {
+                    window.location.href = data.redirect;
+                  }, 1000);
+                }
+              },
+              error: function(data) {
+                console.log(data);
+                Toast.fire({
+                  icon: 'error',
+                  title: data.status + ' ' + data.statusText
+                });
+                if (data.responseJSON.redirect) {
+                  setTimeout(function() {
+                    window.location.href = data.responseJSON.redirect;
+                  }, 1000);
+                }
+              }
+            });
+          } else {
+            swal('Your data is safe');
+          }
+        });
+    });
+
+    <% } %>
+
+    $('#zero_config').DataTable();
+
+  });
+</script>
+</body>
+
+</html>

@@ -1,5 +1,8 @@
 import {
 	adminUserJoiSchema,
+	bookDataJoiSchema,
+	bookJoiSchema,
+	bookWordJoiSchema,
 	categoryJoiSchema,
 	contentTypeJoiSchema,
 	idJoiSchema,
@@ -105,6 +108,42 @@ export const loginValidationMiddleware = (req, res, next) => {
 export const resetPasswordValidationMiddleware = (req, res, next) => {
 	const resetPassword = req.body;
 	const validateResult = resetPasswordJoiSchema.validate(resetPassword);
+	if (validateResult.error) {
+		return res.send({
+			status: false,
+			message: validateResult.error.message,
+		});
+	}
+	next();
+};
+
+export const bookValidationMiddleware = (req, res, next) => {
+	const book = req.body;
+	const validateResult = bookJoiSchema.validate(book);
+	if (validateResult.error) {
+		return res.send({
+			status: false,
+			message: validateResult.error.message,
+		});
+	}
+	next();
+};
+
+export const bookDataValidationMiddleware = (req, res, next) => {
+	const bookData = req.body;
+	const validateResult = bookDataJoiSchema.validate(bookData);
+	if (validateResult.error) {
+		return res.send({
+			status: false,
+			message: validateResult.error.message,
+		});
+	}
+	next();
+};
+
+export const bookWordValidationMiddleware = (req, res, next) => {
+	const bookWord = req.body;
+	const validateResult = bookWordJoiSchema.validate(bookWord);
 	if (validateResult.error) {
 		return res.send({
 			status: false,

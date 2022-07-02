@@ -102,6 +102,11 @@
               title: data.message
             });
           }
+          if (data.redirect) {
+            setTimeout(function() {
+              window.location.href = data.redirect;
+            }, 1000);
+          }
         },
         error: function(data) {
           $this.prop('checked', !isActive);
@@ -109,6 +114,11 @@
             icon: 'error',
             title: data
           });
+          if (data.responseJSON.redirect) {
+            setTimeout(function() {
+              window.location.href = data.responseJSON.redirect;
+            }, 1000);
+          }
         },
       });
       $(this).attr('disabled', false);
@@ -148,6 +158,11 @@
                     title: data.message
                   });
                 }
+                if (data.redirect) {
+                  setTimeout(function() {
+                    window.location.href = data.redirect;
+                  }, 1000);
+                }
               },
               error: function(data) {
                 console.log(data);
@@ -155,6 +170,11 @@
                   icon: 'error',
                   title: data.status + ' ' + data.statusText
                 });
+                if (data.responseJSON.redirect) {
+                  setTimeout(function() {
+                    window.location.href = data.responseJSON.redirect;
+                  }, 1000);
+                }
               }
             });
           } else {

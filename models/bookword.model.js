@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { v4 as uuidV4 } from "uuid";
 
 // style schema for book words
 const styleSchema = mongoose.Schema({
@@ -30,7 +31,7 @@ const bookwordSchema = new mongoose.Schema(
 			required: true,
 			unique: true,
 		},
-		bookId: {
+		book: {
 			type: mongoose.Schema.Types.ObjectId,
 			ref: "Book",
 			required: true,

@@ -36,7 +36,7 @@ export const niyamController = async (req, res) => {
 export const niyamCreateGetController = async (req, res) => {
 	if (new PermissionChecker(req.user).hasPermission("create_niyam")) {
 		const csrfToken = randomStringFromCrypto(16);
-		redisSet(csrfToken, "csrfToken", 60 * 5); // 5 minutes
+		redisSet(csrfToken, "niyamCreate", 60 * 5); // 5 minutes
 
 		const categories = await Category.find({ isActive: true });
 		const medias = await Media.find({ isActive: true });
@@ -67,8 +67,8 @@ export const niyamCreateGetController = async (req, res) => {
 export const niyamCreatePostController = async (req, res) => {
 	if (new PermissionChecker(req.user).hasPermission("create_niyam")) {
 		const body = req.body;
-		const csrfTokenFromRedis = await redisGet(body.csrfToken);
-		if (csrfTokenFromRedis) {
+		const csrfValue = await redisGet(body.csrfToken);
+		if (csrfValue === "niyamCreate") {
 			Object.keys(body).forEach((key) => {
 				if (body[key] === null || body[key] === "") {
 					delete body[key];
@@ -99,12 +99,14 @@ export const niyamCreatePostController = async (req, res) => {
 			return res.send({
 				status: false,
 				message: "form expired, please try again",
+				redirect: "/admin/niyam/create",
 			});
 		}
 	} else {
 		return res.status(403).send({
 			status: false,
 			message: "You do not have permission to create niyam",
+			redirect: "/admin",
 		});
 	}
 };
@@ -113,7 +115,7 @@ export const niyamUpdateGetController = async (req, res) => {
 	const id = req.params.id;
 	if (new PermissionChecker(req.user).hasPermission("edit_niyam")) {
 		const csrfToken = randomStringFromCrypto(16);
-		redisSet(csrfToken, "csrfToken", 60 * 5); // 5 minutes
+		redisSet(csrfToken, "niyamUpdate", 60 * 5); // 5 minutes
 		const row = await Niyam.findById(id).populate("category");
 		if (row) {
 			const categories = await Category.find({ isActive: true });
@@ -153,8 +155,8 @@ export const niyamUpdatePostController = async (req, res) => {
 	const id = req.params.id;
 	if (new PermissionChecker(req.user).hasPermission("edit_niyam")) {
 		const body = req.body;
-		const csrfTokenFromRedis = await redisGet(body.csrfToken);
-		if (csrfTokenFromRedis) {
+		const csrfValue = await redisGet(body.csrfToken);
+		if (csrfValue === "niyamUpdate") {
 			Niyam.findByIdAndUpdate(id, body, (err, niyam) => {
 				if (err) {
 					return res.send({
@@ -180,12 +182,14 @@ export const niyamUpdatePostController = async (req, res) => {
 			return res.send({
 				status: false,
 				message: "form expired, please try again",
+				redirect: "/admin/niyam/update/" + id,
 			});
 		}
 	} else {
 		return res.status(403).send({
 			status: false,
 			message: "You do not have permission to update niyam",
+			redirect: "/admin",
 		});
 	}
 };
@@ -218,6 +222,7 @@ export const niyamDeleteController = async (req, res) => {
 		return res.status(403).send({
 			status: false,
 			message: "You do not have permission to delete niyam",
+			redirect: "/admin",
 		});
 	}
 };
@@ -251,6 +256,7 @@ export const niyamStatusController = async (req, res) => {
 		return res.status(403).send({
 			status: false,
 			message: "You do not have permission to update niyam",
+			redirect: "/admin",
 		});
 	}
 };

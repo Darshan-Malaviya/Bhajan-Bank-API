@@ -228,15 +228,24 @@
                 title: data.message
               });
             }
+            if (data.redirect) {
+              setTimeout(function() {
+                window.location.href = data.redirect;
+              }, 1000);
+            }
             $('#submitBtn').attr('disabled', false);
             $('#submitBtn').removeClass('btn-progress')
           },
           error: function(data) {
-            console.log(data);
             Toast.fire({
               icon: 'error',
               title: data.status + ' ' + data.statusText
             });
+            if (data.responseJSON.redirect) {
+              setTimeout(function() {
+                window.location.href = data.responseJSON.redirect;
+              }, 1000);
+            }
             $('#submitBtn').attr('disabled', false);
             $('#submitBtn').removeClass('btn-progress')
           }
@@ -271,6 +280,11 @@
                 title: data.message
               });
             }
+            if (data.redirect) {
+              setTimeout(function() {
+                window.location.href = data.redirect;
+              }, 1000);
+            }
             $('#passwordBtn').attr('disabled', false);
             $('#passwordBtn').removeClass('btn-progress')
           },
@@ -280,6 +294,11 @@
               icon: 'error',
               title: data.status + ' ' + data.statusText
             });
+            if (data.responseJSON.redirect) {
+              setTimeout(function() {
+                window.location.href = data.responseJSON.redirect;
+              }, 1000);
+            }
             $('#passwordBtn').attr('disabled', false);
             $('#passwordBtn').removeClass('btn-progress')
           }
@@ -290,7 +309,6 @@
       return false;
     });
     <% } %>
-
 
     <% if (new PermissionChecker(locals.user).hasPermission('handle_permissions')) { %>
     $("#permissionBtn").click(() => {
@@ -333,6 +351,11 @@
               title: data.message
             });
           }
+          if (data.redirect) {
+            setTimeout(function() {
+              window.location.href = data.redirect;
+            }, 1000);
+          }
           $('#permissionBtn').attr('disabled', false);
           $('#permissionBtn').removeClass('btn-progress');
         },
@@ -341,6 +364,11 @@
             icon: 'error',
             title: data.status + ' ' + data.statusText
           });
+          if (data.responseJSON.redirect) {
+            setTimeout(function() {
+              window.location.href = data.responseJSON.redirect;
+            }, 1000);
+          }
           $('#permissionBtn').attr('disabled', false);
           $('#permissionBtn').removeClass('btn-progress');
         }

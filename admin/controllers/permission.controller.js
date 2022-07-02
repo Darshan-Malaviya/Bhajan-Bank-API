@@ -28,7 +28,7 @@ export const permissionsController = async (req, res) => {
 export const permissionCreateGetController = async (req, res) => {
 	if (new PermissionChecker(req.user).hasPermission("create_permission")) {
 		const csrfToken = randomStringFromCrypto(16);
-		redisSet(csrfToken, "csrfToken", 60 * 5); // 5 minutes
+		redisSet(csrfToken, "permissionCreate", 60 * 5); // 5 minutes
 
 		const contentTypes = await ContentType.find({ isActive: true });
 
@@ -54,7 +54,7 @@ export const permissionCreateGetController = async (req, res) => {
 export const permissionCreatePostController = async (req, res) => {
 	if (new PermissionChecker(req.user).hasPermission("create_permission")) {
 		const csrfValue = await redisGet(req.body.csrfToken);
-		if (csrfValue) {
+		if (csrfValue === "permissionCreate") {
 			Permission.create(
 				{
 					name: req.body.name,
@@ -89,15 +89,15 @@ export const permissionCreatePostController = async (req, res) => {
 			return res.send({
 				status: false,
 				message: "form expired, please try again",
+				redirect: "/admin/permission/create",
 			});
 		}
 	} else {
-		messagePusher(
-			req,
-			"danger",
-			"You do not have permission to view this page"
-		);
-		res.redirect("/admin");
+		return res.send({
+			status: false,
+			message: "You do not have permission to create permission",
+			redirect: "/admin",
+		});
 	}
 };
 
@@ -106,7 +106,7 @@ export const permissionUpdateGetController = async (req, res) => {
 		const id = req.params.id;
 
 		const csrfToken = randomStringFromCrypto(16);
-		redisSet(csrfToken, "csrfToken", 60 * 5); // 5 minutes
+		redisSet(csrfToken, "permissionUpdate", 60 * 5); // 5 minutes
 
 		const row = await Permission.findById(id).populate("contentType");
 		if (row) {
@@ -141,7 +141,7 @@ export const permissionUpdatePostController = async (req, res, next) => {
 	if (new PermissionChecker(req.user).hasPermission("edit_permission")) {
 		const id = req.params.id;
 		const csrfValue = await redisGet(req.body.csrfToken);
-		if (csrfValue) {
+		if (csrfValue === "permissionUpdate") {
 			Permission.findByIdAndUpdate(
 				id,
 				{
@@ -183,15 +183,15 @@ export const permissionUpdatePostController = async (req, res, next) => {
 			return res.send({
 				status: false,
 				message: "form expired, please try again",
+				redirect: "/admin/permission/update/" + id,
 			});
 		}
 	} else {
-		messagePusher(
-			req,
-			"danger",
-			"You do not have permission to view this page"
-		);
-		res.redirect("/admin");
+		return res.send({
+			status: false,
+			message: "You do not have permission to update permission",
+			redirect: "/admin",
+		});
 	}
 };
 
@@ -220,12 +220,11 @@ export const permissionDeleteController = (req, res) => {
 			}
 		});
 	} else {
-		messagePusher(
-			req,
-			"danger",
-			"You do not have permission to view this page"
-		);
-		res.redirect("/admin");
+		return res.send({
+			status: false,
+			message: "You do not have permission to delete permission",
+			redirect: "/admin",
+		});
 	}
 };
 
@@ -267,11 +266,10 @@ export const permissionStatusController = async (req, res) => {
 			}
 		);
 	} else {
-		messagePusher(
-			req,
-			"danger",
-			"You do not have permission to view this page"
-		);
-		res.redirect("/admin");
+		return res.send({
+			status: false,
+			message: "You do not have permission to update permission",
+			redirect: "/admin",
+		});
 	}
 };

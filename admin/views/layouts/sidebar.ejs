@@ -1,10 +1,13 @@
 </head>
 
 <body class="<% if(locals.theme == 'dark') {%>dark-mode<% } else { %>light-mode<% } %> sidebar-mini layout-fixed sidebar-collapse sidebar-closed">
+  <button class="btn-primary" id="fabBtn" title="FAB button">
+    <i class="fas fa-plus"></i>
+  </button>
   <div class="wrapper">
     <!-- Preloader -->
     <div class="preloader flex-column justify-content-center align-items-center">
-      <img src="/admin/public/img/kalakunj-mandir-logo-50.png" alt="AdminLTELogo" height="60" width="60">
+      <img src="/admin/public/img/loader.gif" alt="Kalakunj Mandir" height="60" width="60">
     </div>
 
 
@@ -24,7 +27,7 @@
             <span class="dropdown-item dropdown-header"><%= locals.user.name %></span>
             <div class="dropdown-divider"></div>
             <div class="custom-control custom-switch dropdown-item dropdown-header">
-              <input type="checkbox" class="custom-control-input activeCheckbox" value="<%= locals.theme %>" id="theme" <% if(locals.theme == 'dark') {%>checked<% }%>>
+              <input type="checkbox" class="custom-control-input" value="<%= locals.theme %>" id="theme" <% if(locals.theme == 'dark') {%>checked<% }%>>
               <label class="custom-control-label" for="theme"><%= locals.theme %></label>
             </div>
             <div class="dropdown-divider"></div>
@@ -248,6 +251,59 @@
                   <a href="/admin/niyam" class="nav-link">
                     <i class="fas fa-list nav-icon"></i>
                     <p>All</p>
+                  </a>
+                </li>
+                <% } %>
+              </ul>
+            </li>
+            <% } %>
+            <% if (new PermissionChecker(locals.user).hasAnyPermission(['list_books','create_book','create_bookData','list_bookDatas','list_bookWords'])) { %>
+            <li class="nav-item">
+              <a href="#" class="nav-link">
+                <i class="nav-icon fas fa-book-open"></i>
+                <p>
+                  Book
+                  <i class="right fas fa-angle-left"></i>
+                </p>
+              </a>
+              <ul class="nav nav-treeview" style="display: none;">
+                <% if (new PermissionChecker(locals.user).hasPermission('create_book')) { %>
+                <li class="nav-item">
+                  <a href="/admin/book/create" class="nav-link">
+                    <i class="fas fa-plus nav-icon"></i>
+                    <p>create Book</p>
+                  </a>
+                </li>
+                <% } %>
+                <% if (new PermissionChecker(locals.user).hasPermission('list_books')) { %>
+                <li class="nav-item">
+                  <a href="/admin/book" class="nav-link">
+                    <i class="fas fa-list nav-icon"></i>
+                    <p>Book list</p>
+                  </a>
+                </li>
+                <% } %>
+                <% if (new PermissionChecker(locals.user).hasPermission('create_bookData')) { %>
+                <li class="nav-item">
+                  <a href="/admin/bookdata/create" class="nav-link">
+                    <i class="fas fa-list nav-icon"></i>
+                    <p>create Book Data</p>
+                  </a>
+                </li>
+                <% } %>
+                <% if (new PermissionChecker(locals.user).hasPermission('list_bookDatas')) { %>
+                <li class="nav-item">
+                  <a href="/admin/bookdata" class="nav-link">
+                    <i class="fas fa-list nav-icon"></i>
+                    <p>Book Data list</p>
+                  </a>
+                </li>
+                <% } %>
+                <% if (new PermissionChecker(locals.user).hasPermission('list_bookWords')) { %>
+                <li class="nav-item">
+                  <a href="/admin/book/words" class="nav-link">
+                    <i class="fas fa-list nav-icon"></i>
+                    <p>words</p>
                   </a>
                 </li>
                 <% } %>

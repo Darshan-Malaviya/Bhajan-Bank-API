@@ -27,7 +27,7 @@ export const contentTypesController = async (req, res) => {
 export const contentTypeCreateGetController = async (req, res) => {
 	if (new PermissionChecker(req.user).isSuperUser()) {
 		const csrfToken = randomStringFromCrypto(16);
-		redisSet(csrfToken, "csrfToken", 60 * 5); // 5 minutes
+		redisSet(csrfToken, "contentTypeCreate", 60 * 5); // 5 minutes
 
 		const resParams = {
 			pagePath: "ContentType Create",
@@ -50,7 +50,7 @@ export const contentTypeCreateGetController = async (req, res) => {
 export const contentTypeCreatePostController = async (req, res) => {
 	if (new PermissionChecker(req.user).isSuperUser()) {
 		const csrfValue = await redisGet(req.body.csrfToken);
-		if (csrfValue) {
+		if (csrfValue === "contentTypeCreate") {
 			ContentType.create(
 				{
 					name: req.body.name,
@@ -77,15 +77,15 @@ export const contentTypeCreatePostController = async (req, res) => {
 			return res.send({
 				status: false,
 				message: "form expired, please try again",
+				redirect: "/admin/contentType/create",
 			});
 		}
 	} else {
-		messagePusher(
-			req,
-			"danger",
-			"You do not have permission to view this page"
-		);
-		res.redirect("/admin");
+		return res.send({
+			status: false,
+			message: "You do not have permission to view this page",
+			redirect: "/admin",
+		});
 	}
 };
 
@@ -93,7 +93,7 @@ export const contentTypeUpdateGetController = async (req, res) => {
 	if (new PermissionChecker(req.user).isSuperUser()) {
 		const id = req.params.id;
 		const csrfToken = randomStringFromCrypto(16);
-		redisSet(csrfToken, "csrfToken", 60 * 5); // 5 minutes
+		redisSet(csrfToken, "contentTypeUpdate", 60 * 5); // 5 minutes
 
 		const row = await ContentType.findById(id).lean();
 		const resParams = {
@@ -118,8 +118,9 @@ export const contentTypeUpdateGetController = async (req, res) => {
 
 export const contentTypeUpdatePostController = async (req, res, next) => {
 	if (new PermissionChecker(req.user).isSuperUser()) {
+		const id = req.params.id;
 		const csrfValue = await redisGet(req.body.csrfToken);
-		if (csrfValue) {
+		if (csrfValue === "contentTypeUpdate") {
 			ContentType.findByIdAndUpdate(
 				id,
 				{
@@ -152,15 +153,15 @@ export const contentTypeUpdatePostController = async (req, res, next) => {
 			return res.send({
 				status: false,
 				message: "form expired, please try again",
+				redirect: "/admin/contentType/update/" + id,
 			});
 		}
 	} else {
-		messagePusher(
-			req,
-			"danger",
-			"You do not have permission to view this page"
-		);
-		res.redirect("/admin");
+		return res.send({
+			status: false,
+			message: "You do not have permission to update the contentType",
+			redirect: "/admin",
+		});
 	}
 };
 
@@ -181,12 +182,11 @@ export const contentTypeDeleteController = (req, res) => {
 			}
 		});
 	} else {
-		messagePusher(
-			req,
-			"danger",
-			"You do not have permission to view this page"
-		);
-		res.redirect("/admin");
+		return res.send({
+			status: false,
+			message: "You do not have permission to delete the contentType",
+			redirect: "/admin",
+		});
 	}
 };
 
@@ -217,11 +217,10 @@ export const contentTypeStatusController = async (req, res) => {
 			}
 		});
 	} else {
-		messagePusher(
-			req,
-			"danger",
-			"You do not have permission to view this page"
-		);
-		res.redirect("/admin");
+		return res.send({
+			status: false,
+			message: "You do not have permission to update the contentType",
+			redirect: "/admin",
+		});
 	}
 };

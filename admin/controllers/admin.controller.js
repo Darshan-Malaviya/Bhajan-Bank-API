@@ -23,7 +23,7 @@ export const adminsController = async (req, res) => {
 export const adminCreateGetController = async (req, res) => {
 	if (new PermissionChecker(req.user).hasPermission("create_admin")) {
 		const csrfToken = randomStringFromCrypto(16);
-		redisSet(csrfToken, "csrfToken", 60 * 5); // 5 minutes
+		redisSet(csrfToken, "adminCreate", 60 * 5); // 5 minutes
 
 		const resParams = {
 			pagePath: "Admin Create",
@@ -53,7 +53,7 @@ export const adminCreatePostController = async (req, res) => {
 				message: "Password is required",
 			});
 		}
-		if (csrfValue) {
+		if (csrfValue == "adminCreate") {
 			const encryptedPassword = await encryptPassword(password);
 			Admin.create(
 				{
@@ -95,6 +95,7 @@ export const adminCreatePostController = async (req, res) => {
 		return res.status(403).send({
 			status: false,
 			message: "You don't have permission to create new admin",
+			redirect: "/admin",
 		});
 	}
 };
@@ -104,7 +105,7 @@ export const adminUpdateGetController = async (req, res) => {
 		const id = req.params.id;
 
 		const csrfToken = randomStringFromCrypto(16);
-		redisSet(csrfToken, "csrfToken", 60 * 5); // 5 minutes
+		redisSet(csrfToken, "adminUpdate", 60 * 5); // 5 minutes
 		try {
 			const row = await Admin.findById(id);
 			if (row) {
@@ -138,7 +139,7 @@ export const adminUpdatePostController = async (req, res, next) => {
 	const id = req.params.id;
 	if (new PermissionChecker(req.user).hasPermission("edit_admin")) {
 		const csrfValue = await redisGet(req.body.csrfToken);
-		if (csrfValue) {
+		if (csrfValue == "adminUpdate") {
 			Admin.findByIdAndUpdate(
 				id,
 				{
@@ -180,8 +181,11 @@ export const adminUpdatePostController = async (req, res, next) => {
 			});
 		}
 	} else {
-		messagePusher(req, "danger", "You don't have permission to update admin");
-		res.redirect("/admin");
+		return res.status(403).send({
+			status: false,
+			message: "You don't have permission to update admin",
+			redirect: "/admin",
+		});
 	}
 };
 
@@ -209,8 +213,11 @@ export const adminDeleteController = (req, res) => {
 			}
 		});
 	} else {
-		messagePusher(req, "danger", "You don't have permission to delete admin");
-		res.redirect("/admin");
+		return res.status(403).send({
+			status: false,
+			message: "You don't have permission to delete admin",
+			redirect: "/admin",
+		});
 	}
 };
 
@@ -255,8 +262,11 @@ export const adminStatusController = async (req, res) => {
 			}
 		);
 	} else {
-		messagePusher(req, "danger", "You don't have permission to update admin");
-		res.redirect("/admin");
+		return res.status(403).send({
+			status: false,
+			message: "You don't have permission to update admin",
+			redirect: "/admin",
+		});
 	}
 };
 
@@ -300,8 +310,11 @@ export const adminSuperUserStatusController = async (req, res) => {
 			}
 		);
 	} else {
-		messagePusher(req, "danger", "You don't have permission to update admin");
-		res.redirect("/admin");
+		return res.status(403).send({
+			status: false,
+			message: "You don't have permission to update admin",
+			redirect: "/admin",
+		});
 	}
 };
 
@@ -353,12 +366,11 @@ export const adminUsersPermissionPostController = async (req, res) => {
 			});
 		}
 	} else {
-		messagePusher(
-			req,
-			"danger",
-			"You don't have permission to grant permissions"
-		);
-		res.redirect("/admin");
+		return res.status(403).send({
+			status: false,
+			message: "You don't have permission to update admin",
+			redirect: "/admin",
+		});
 	}
 };
 
@@ -367,7 +379,7 @@ export const adminResetPasswordController = async (req, res) => {
 	const { password, confirmPassword, csrfToken } = req.body;
 	if (new PermissionChecker(req.user).hasPermission("edit_admin")) {
 		const csrfValue = await redisGet(csrfToken);
-		if (csrfValue) {
+		if (csrfValue == "adminUpdate") {
 			if (password === confirmPassword) {
 				const encryptedPassword = await encryptPassword(password);
 				Admin.findByIdAndUpdate(
@@ -416,7 +428,10 @@ export const adminResetPasswordController = async (req, res) => {
 			});
 		}
 	} else {
-		messagePusher(req, "danger", "You don't have permission to update admin");
-		res.redirect("/admin");
+		return res.status(403).send({
+			status: false,
+			message: "You don't have permission to update admin",
+			redirect: "/admin",
+		});
 	}
 };

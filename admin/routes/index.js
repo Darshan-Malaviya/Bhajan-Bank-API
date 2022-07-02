@@ -1,7 +1,6 @@
 import express from "express";
 import { homeController, themeController } from "../controllers/index.js";
-import { messageMiddleware } from "../middlewares/message.middleware.js";
-// import bookRouter from "./book.route.js";
+import bookRouter, { dataRouter as bookDataRouter } from "./book.route.js";
 import contentTypeRouter from "./contentType.route.js";
 import permissionRouter from "./permission.route.js";
 import adminRouter from "./admin.route.js";
@@ -13,6 +12,7 @@ import {
 	loginPostController,
 	logoutController,
 } from "../controllers/auth.controller.js";
+import { messageMiddleware } from "../middlewares/message.middleware.js";
 import { userVerification } from "../middlewares/user.middleware.js";
 import { breadcrumbMiddleware } from "../middlewares/breadcrumb.middleware.js";
 import { loginValidationMiddleware } from "../middlewares/validator.middleware.js";
@@ -37,7 +37,8 @@ router.post("/login", loginValidationMiddleware, loginPostController);
 router.get("/logout", logoutController);
 
 // // admin/books
-// router.use("/book", userVerification, bookRouter);
+router.use("/book", userVerification, bookRouter);
+router.use("/bookdata", userVerification, bookDataRouter);
 
 // admin/category
 router.use("/category", userVerification, categoryRouter);

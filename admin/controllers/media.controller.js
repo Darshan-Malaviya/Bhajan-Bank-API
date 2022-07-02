@@ -1,3 +1,4 @@
+import fs from "fs";
 import { Media } from "../../models/index.js";
 import { ContentType } from "../models/index.js";
 import { randomStringFromCrypto } from "../helpers/uniqueGenerator.js";
@@ -26,7 +27,7 @@ export const mediaController = async (req, res) => {
 export const mediaCreateGetController = async (req, res) => {
 	if (new PermissionChecker(req.user).hasPermission("create_media")) {
 		const csrfToken = randomStringFromCrypto(16);
-		redisSet(csrfToken, "csrfToken", 60 * 5); // 5 minutes
+		redisSet(csrfToken, "mediaCreate", 60 * 5); // 5 minutes
 
 		const contentTypes = await ContentType.find({ isActive: true });
 		const mediaTypes = await Media.schema.path("type").enumValues;
@@ -57,7 +58,7 @@ export const mediaCreatePostController = async (req, res) => {
 		const { name, type, contentType, csrfToken } = req.body;
 
 		const csrfValue = await redisGet(req.body.csrfToken);
-		if (!csrfValue) {
+		if (csrfValue !== "mediaCreate") {
 			messagePusher(req, "error", "Form expired. Please try again.");
 			return res.redirect("/media/create");
 		}
@@ -98,6 +99,7 @@ export const mediaCreatePostController = async (req, res) => {
 export const mediaDeleteController = async (req, res) => {
 	if (new PermissionChecker(req.user).hasPermission("delete_media")) {
 		const { id } = req.params;
+
 		Media.findByIdAndDelete(id, (err, row) => {
 			if (err) {
 				return res.send({
@@ -106,6 +108,11 @@ export const mediaDeleteController = async (req, res) => {
 				});
 			} else {
 				if (row) {
+					fs.unlink(row.url, (err) => {
+						if (err) {
+							console.log(err);
+						}
+					});
 					return res.send({
 						status: true,
 						message: "Media deleted successfully",
@@ -119,8 +126,11 @@ export const mediaDeleteController = async (req, res) => {
 			}
 		});
 	} else {
-		messagePusher(req, "danger", "You do not have permission to delete media");
-		res.redirect("/admin");
+		return res.send({
+			status: false,
+			message: "You do not have permission to delete media",
+			redirect: "/admin",
+		});
 	}
 };
 
@@ -164,7 +174,10 @@ export const mediaStatusController = async (req, res) => {
 			}
 		);
 	} else {
-		messagePusher(req, "danger", "You do not have permission to update media");
-		res.redirect("/admin");
+		return res.send({
+			status: false,
+			message: "You do not have permission to edit media",
+			redirect: "/admin",
+		});
 	}
 };

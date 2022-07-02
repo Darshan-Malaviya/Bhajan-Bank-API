@@ -4,7 +4,7 @@ import mongoose from "mongoose";
 // fields need to add createdBy, updatedBy
 const bookSchema = new mongoose.Schema(
 	{
-		title: {
+		name: {
 			type: String,
 			required: true,
 		},

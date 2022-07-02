@@ -3,10 +3,13 @@ import express from "express";
 import session from "express-session";
 import { v4 as uuidv4 } from "uuid";
 import bodyParser from "body-parser";
+import fs from "fs";
 
 import db from "./database/db.js";
 import apiRouter from "./routes/index.js";
 import adminRouter from "./admin/routes/index.js";
+import BookData from "./models/bookData.model.js";
+import { redisFlushAll } from "./database/redisDb.js";
 
 const PORT = process.env.port || 8000;
 
@@ -49,7 +52,20 @@ app.use("/api", apiRouter);
 
 // home route
 app.get("/", async (req, res) => {
-	res.send({
+	// fs.readFile("./vachnamrutText.json", "utf-8", async (err, data) => {
+	// 	if (err) throw err;
+	// 	var chapterList = JSON.parse(data);
+	// 	for (var i = 0; i < chapterList.length; i++) {
+	// 		var chapter = chapterList[i];
+	// 		var bookData = new BookData({
+	// 			title: chapter.title,
+	// 			book: "62ac637d38b4c7339bffabd5",
+	// 			data: chapter.content,
+	// 		});
+	// 		await bookData.save();
+	// 	}
+	// });
+	return res.send({
 		status: true,
 		message: "Welcome to the API",
 	});
